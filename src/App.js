@@ -6,29 +6,35 @@ import Home from "./Components/Home";
 import Register from "./Components/Register";
 import Login from "./Components/Login";
 import Welcome from "./Components/Welcome";
+// import Users from "./Users.js";
+import React from "react";
 
 function App() {
   return (
     <>
-    <Router>
+      <Router>
+        <Header />
 
-      <Header />
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              <React.Fragment>
+                <Home /> 
+              </React.Fragment>
+            }
+          />
 
-      <Routes>
+          <Route exact path="/register" element={<Register />} />
 
-      <Route exact path="/" element={<Home/>} />
+          <Route exact path="/login" element={<Login />} />
 
-      <Route exact path="/register" element={<Register/>} />
+          <Route exact path="/welcome" element={<Welcome />} />
+        </Routes>
 
-      <Route exact path="/login" element={<Login/>} />
-
-      <Route exact path="/welcome" element={<Welcome/>} />
-
-      </Routes>
-
-      <Footer />
-
-    </Router>
+        <Footer />
+      </Router>
     </>
   );
 }
