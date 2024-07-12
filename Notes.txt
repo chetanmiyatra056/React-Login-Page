@@ -1,0 +1,15 @@
+// Api
+
+php artisan make:controller Api\TestController
+
+php artisan make:controller Api\UserController
+
+php artisan make:model Student
+
+php artisan make:migration create_student_table
+
+php artisan make:controller Api/ReactController
+
+
+
+
