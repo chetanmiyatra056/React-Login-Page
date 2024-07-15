@@ -1,9 +1,19 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 export default function Home() {
+
+  const navigate = useNavigate();
+
+  function logOut() {
+    localStorage.clear();
+    navigate("/login")
+  }
+
   return (
     <div>
+      <Header />
       <div className="container my-3">
         <div className="p-5 bg-dark text-light rounded-3">
           <div className="container-fluid py-5">
@@ -14,13 +24,31 @@ export default function Home() {
               examples below for how you can remix and restyle it to your
               liking.
             </p>
-            {/* <button className="btn btn-primary btn-lg" type="button">
-              Now Login
-            </button> */}
-             <Link className="btn btn-primary btn-lg" type="button" to="/login">Now Login</Link>
+
+            {localStorage.getItem("user-info") ? (
+              <>
+                <button
+                  className="btn btn-primary btn-lg"
+                  type="button"
+                  onClick={logOut}
+                >
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  className="btn btn-primary btn-lg"
+                  type="button"
+                  to="/login"
+                >
+                  Now Login
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
