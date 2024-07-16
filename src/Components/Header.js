@@ -13,7 +13,7 @@ export default function Header() {
   // }
 
   return (
-    <div style={{ marginBottom: "80px" }}>
+    <div style={{ marginBottom: "60px" }}>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div className="container-fluid">
           <Link className="navbar-brand" to="/">

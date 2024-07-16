@@ -7,8 +7,11 @@ export default function Home() {
   const navigate = useNavigate();
 
   function logOut() {
-    localStorage.clear();
-    navigate("/login")
+    const confirm = window.confirm('Are you sure to logout?');
+    if (confirm) {
+      localStorage.clear();
+      navigate("/login")
+    }
   }
 
   return (
