@@ -15,15 +15,15 @@ class RegisterController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required|email',
-            'password' => 'required',
-            'confirm_password' => 'required|same:password',
+            'name' => 'required|unique:users|max:10',
+            'email' => 'required|unique:users|regex:/(.+)@(.+)\.(.+)/i',
+            'password' => 'required|min:4|max:8',
+            'confirm_password' => 'required|same:password|min:4|max:8',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => 'Please fix the errors.',
+                'message' => false,
                 'error' => $validator->errors(),
                 'status' => false,
             ], 200);
@@ -36,6 +36,12 @@ class RegisterController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
-        return $request->input();
+        // return $request->input();
+
+        return response()->json([
+            'message' => 'User registered successfully.',
+            'status' => true,
+            'data' => $user,
+        ], 201);
     }
 }
