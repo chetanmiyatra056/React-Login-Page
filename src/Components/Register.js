@@ -19,7 +19,41 @@ function Register() {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
 
+  const validateForm = () => {
+    let formErrors = {};
+
+    if (!name.trim()) {
+      formErrors.name = "Username is required";
+    }
+
+    if (!email.trim()) {
+      formErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      formErrors.email = "Email address is invalid";
+    }
+
+    if (!password) {
+      formErrors.password = "Password is required";
+    } else if (password.length < 4) {
+      formErrors.password = "Password must be at least 4 characters";
+    }
+
+    if (!confirm_password) {
+      formErrors.confirm_password = "Confirm Password is required";
+    } else if (confirm_password !== password) {
+      formErrors.confirm_password = "Passwords do not match";
+    }
+
+    setErrors(formErrors);
+
+    return Object.keys(formErrors).length === 0;
+  };
+
   async function signUp() {
+    if (!validateForm()) {
+      return;
+    }
+
     let item = { name, email, password, confirm_password };
     // console.warn(item);
 
@@ -47,8 +81,17 @@ function Register() {
     }
   }
 
+  // function reset() {
+  //   window.location.reload();
+  // }
+
   function reset() {
-    window.location.reload();
+    setName("");
+    setEmail("");
+    setPassword("");
+    setConfirm_password("");
+    setErrors({});
+    setMessage("");
   }
 
   return (
@@ -71,7 +114,7 @@ function Register() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            {errors.name && <div className="text-danger">{errors.name[0]}</div>}
+            {errors.name && <div className="text-danger">{errors.name}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
@@ -85,9 +128,7 @@ function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && (
-              <div className="text-danger">{errors.email[0]}</div>
-            )}
+            {errors.email && <div className="text-danger">{errors.email}</div>}
           </div>
           <div className="mb-3">
             <label htmlFor="password" className="form-label">
@@ -102,7 +143,7 @@ function Register() {
               onChange={(e) => setPassword(e.target.value)}
             />
             {errors.password && (
-              <div className="text-danger">{errors.password[0]}</div>
+              <div className="text-danger">{errors.password}</div>
             )}
           </div>
 
@@ -119,7 +160,7 @@ function Register() {
               onChange={(e) => setConfirm_password(e.target.value)}
             />
             {errors.confirm_password && (
-              <div className="text-danger">{errors.confirm_password[0]}</div>
+              <div className="text-danger">{errors.confirm_password}</div>
             )}
           </div>
 

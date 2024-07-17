@@ -17,7 +17,31 @@ function Login() {
     }
   });
 
+  const validateForm = () => {
+    let formErrors = {};
+
+    if (!email.trim()) {
+      formErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      formErrors.email = "Email address is invalid";
+    }
+
+    if (!password) {
+      formErrors.password = "Password is required";
+    } else if (password.length < 4) {
+      formErrors.password = "Password must be at least 4 characters";
+    }
+
+    setErrors(formErrors);
+
+    return Object.keys(formErrors).length === 0;
+  };
+
   async function login() {
+    if (!validateForm()) {
+      return;
+    }
+
     console.warn(email, password);
     let item = { email, password };
 
@@ -46,7 +70,10 @@ function Login() {
   }
 
   function reset() {
-    window.location.reload();
+    setEmail("");
+    setPassword("");
+    setErrors({});
+    setMessage("");
   }
 
   return (
@@ -66,9 +93,7 @@ function Login() {
               id="email"
               onChange={(e) => setEmail(e.target.value)}
             />
-            {errors.email && (
-              <div className="text-danger">{errors.email[0]}</div>
-            )}
+            {errors.email && <div className="text-danger">{errors.email}</div>}
           </div>
 
           <div className="mb-3">
@@ -82,7 +107,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
             {errors.password && (
-              <div className="text-danger">{errors.password[0]}</div>
+              <div className="text-danger">{errors.password}</div>
             )}
           </div>
 

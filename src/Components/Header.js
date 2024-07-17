@@ -2,16 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Header() {
-  // let user = JSON.parse(localStorage.getItem("user-info"));
-  // console.warn(user);
-
-  // const navigate = useNavigate();
-
-  // function logOut() {
-  //   localStorage.clear();
-  //   navigate("/login")
-  // }
-
   return (
     <div style={{ marginBottom: "60px" }}>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -41,34 +31,11 @@ export default function Header() {
               {localStorage.getItem("user-info") ? (
                 <>
                   {/* With Login */}
-
                   <li className="nav-item">
                     <Link className="nav-link active" to="/welcome">
                       Welcome
                     </Link>
                   </li>
-
-                  {/* <li className="nav-item dropdown">
-                    <Link
-                      className="nav-link active dropdown-toggle"
-                      id="users"
-                      role="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {user && user.name}
-                    </Link>
-                    <ul
-                      className="dropdown-menu"
-                      aria-labelledby="navbarDropdown"
-                    >
-                      <li>
-                        <Link className="dropdown-item" onClick={logOut} >
-                          Log Out
-                        </Link>
-                      </li>
-                    </ul>
-                  </li> */}
                 </>
               ) : (
                 <>
