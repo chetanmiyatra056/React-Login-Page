@@ -14,8 +14,8 @@ class LoginController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'email' => 'required|regex:/(.+)@(.+)\.(.+)/i',
-            'password' => 'required|min:4|max:8',
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
 
         if ($validator->fails()) {
