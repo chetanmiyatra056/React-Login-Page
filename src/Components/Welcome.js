@@ -21,7 +21,7 @@ export default function Welcome() {
       <div className="container my-5">
         <div className="p-5 bg-dark text-light rounded-3">
           <div className="container-fluid py-5">
-            <h1 className="display-5 fw-bold">Welcome {user && user.email}</h1>
+            <h1 className="display-5 fw-bold">Hello {user && user.email}</h1>
             <p className="col-md-8 fs-4">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab ipsam
               ducimus voluptas sit. Quisquam, animi facilis iure error id

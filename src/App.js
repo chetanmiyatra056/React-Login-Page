@@ -1,21 +1,18 @@
 import "./App.css";
-// import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Home from "./Components/Home";
 import Register from "./Components/Register";
 import Login from "./Components/Login";
 import Welcome from "./Components/Welcome";
-// import Users from "./Users.js";
 import React from "react";
-import Protected from "./Protected";
+import PrivateRoute from "./Middleware/PrivateRoute";
+import PublicRoute from "./Middleware/PublicRoute";
 
 function App() {
   return (
     <>
       <Router>
-        {/* <Header /> */}
-
         <Routes>
           <Route
             exact
@@ -27,11 +24,15 @@ function App() {
             }
           />
 
-          <Route exact path="/register" element={<Register />} />
+          <Route element={<PublicRoute />}>
+            <Route exact path="/register" element={<Register />} />
 
-          <Route exact path="/login" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
 
-          <Route exact path="/welcome" element={<> <Protected Cmp={Welcome}/> </>} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/welcome" element={<Welcome />} />
+          </Route>
         </Routes>
 
         <Footer />

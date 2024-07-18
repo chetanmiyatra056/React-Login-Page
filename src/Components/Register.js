@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
+import { apiLaravel } from "../Utils/Apiurl";
 
 function Register() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (localStorage.getItem("user-info")) {
-      navigate("/login");
-    }
-  });
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,71 +14,59 @@ function Register() {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
 
-  const validateForm = () => {
-    let formErrors = {};
+  const validate = () => {
+    const newErrors = {};
 
-    if (!name.trim()) {
-      formErrors.name = "Username is required";
+    if (!name) {
+      newErrors.name = "Username is required";
     }
 
-    if (!email.trim()) {
-      formErrors.email = "Email is required";
+    if (!email) {
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      formErrors.email = "Email address is invalid";
+      newErrors.email = "Email address is invalid";
     }
 
     if (!password) {
-      formErrors.password = "Password is required";
+      newErrors.password = "Password is required";
     } else if (password.length < 4) {
-      formErrors.password = "Password must be at least 4 characters";
+      newErrors.password = "Password must be at minimum 4 characters";
+    } else if (password.length > 8) {
+      newErrors.password = "Password must be at maximum 8 characters";
     }
 
     if (!confirm_password) {
-      formErrors.confirm_password = "Confirm Password is required";
-    } else if (confirm_password !== password) {
-      formErrors.confirm_password = "Passwords do not match";
+      newErrors.confirm_password = "Confirm Password is required";
+    } else if (password !== confirm_password) {
+      newErrors.confirm_password = "Passwords do not match";
     }
 
-    setErrors(formErrors);
-
-    return Object.keys(formErrors).length === 0;
+    return newErrors;
   };
 
   async function signUp() {
-    if (!validateForm()) {
-      return;
-    }
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length === 0) {
+      let item = { name, email, password, confirm_password };
+      let response = await apiLaravel("/register", {
+        method: "POST",
+        body: JSON.stringify(item),
+      });
 
-    let item = { name, email, password, confirm_password };
-    // console.warn(item);
-
-    let response = await fetch("http://127.0.0.1:8000/api/register", {
-      method: "POST",
-      body: JSON.stringify(item),
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-
-    let result = await response.json();
-
-    if (result.status === false) {
-      setErrors(result.error);
-      setMessage(result.message);
+      if (response.status === false) {
+        setErrors(response.error);
+        setMessage(response.message);
+      } else {
+        setErrors({});
+        setMessage("User registered successfully.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+      }
     } else {
-      setErrors({});
-      setMessage("User registered successfully.");
-      // localStorage.setItem("user-info", JSON.stringify(result.data));
-      setTimeout(() => {
-        navigate("/login");
-      }, 1000);
+      setErrors(validationErrors);
     }
   }
-
-  // function reset() {
-  //   window.location.reload();
-  // }
 
   function reset() {
     setName("");

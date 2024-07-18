@@ -1,71 +1,67 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
+import { apiLaravel } from "../Utils/Apiurl";
 
 function Login() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // if (localStorage.getItem("user-info")) {
+    //   navigate("/welcome");
+    // }
+  });
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
 
-  const navigate = useNavigate();
+  const validate = () => {
+    const errors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  useEffect(() => {
-    if (localStorage.getItem("user-info")) {
-      navigate("/welcome");
-    }
-  });
-
-  const validateForm = () => {
-    let formErrors = {};
-
-    if (!email.trim()) {
-      formErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      formErrors.email = "Email address is invalid";
+    if (!email) {
+      errors.email = "Email is required";
+    } else if (!emailPattern.test(email)) {
+      errors.email = "Invalid email format";
     }
 
     if (!password) {
-      formErrors.password = "Password is required";
+      errors.password = "Password is required";
     } else if (password.length < 4) {
-      formErrors.password = "Password must be at least 4 characters";
+      errors.password = "Password must be at minimum 4 characters";
+    }else if (password.length > 8) {
+      errors.password = "Password must be at maximum 8 characters";
     }
 
-    setErrors(formErrors);
-
-    return Object.keys(formErrors).length === 0;
+    return errors;
   };
-
   async function login() {
-    if (!validateForm()) {
-      return;
-    }
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length === 0) {
+      let item = { email, password };
 
-    console.warn(email, password);
-    let item = { email, password };
+      let response = await apiLaravel("/login", {
+        method: "POST",
+        body: JSON.stringify(item),
+      });
 
-    let response = await fetch("http://127.0.0.1:8000/api/login", {
-      method: "POST",
-      body: JSON.stringify(item),
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-
-    let result = await response.json();
-
-    if (result.status === false) {
-      setErrors(result.error);
-      setMessage(result.message);
+      
+      if (response.status === false) {
+        setErrors(response.error);
+        setMessage(response.message);
+      } else {
+        setErrors({});
+        setMessage("User registered successfully.");
+        setTimeout(() => {
+          localStorage.setItem("user-info", JSON.stringify(response.data));
+          navigate("/welcome");
+        }, 1000);
+      }
     } else {
-      setErrors({});
-      setMessage("User logged in successfully.");
-      setTimeout(() => {
-        localStorage.setItem("user-info", JSON.stringify(result.data));
-        navigate("/welcome");
-      }, 1000);
+      setErrors(validationErrors);
     }
   }
 
