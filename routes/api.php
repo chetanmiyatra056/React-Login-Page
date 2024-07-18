@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\DropDownController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ReactController;
 use App\Http\Controllers\Api\RegisterController;
@@ -36,3 +37,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register',[RegisterController::class ,'register']);
 
 Route::post('/login',[LoginController::class ,'login']);
+
+Route::post('/countries',[DropDownController::class ,'countries']);
+
+Route::get('/states/{states}',[DropDownController::class,'states']);
+
+Route::get('/cities/{cities}',[DropDownController::class,'cities']);
+
+

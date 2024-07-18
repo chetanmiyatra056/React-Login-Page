@@ -1,23 +1,40 @@
-// Api
+// Laravel API
+
+
+
+// Create Controllers
 
 php artisan make:controller Api\TestController
 
 php artisan make:controller Api\UserController
 
-php artisan make:controller Api/ReactController
+php artisan make:controller Api\ReactController
 
-php artisan make:controller Api/RegisterController
+php artisan make:controller Api\RegisterController
 
-php artisan make:controller Api/LoginController
+php artisan make:controller Api\LoginController
+
+php artisan make:controller Api\DropDownController
 
 
-//
+
+// Add Migration
+
+php artisan make:migration add_countries_field_to_users
+
+php artisan make:migration add_states_field_to_users
+
+php artisan make:migration add_cities_field_to_users
 
 
-php artisan make:model Student
 
-php artisan make:migration create_student_table
+// Create Model
 
+php artisan make:model Countries
+
+php artisan make:model States
+
+php artisan make:model Cities
 
 
 
