@@ -46,7 +46,7 @@ class LoginController extends Controller
         }
 
         return response()->json([
-            'message' => 'User logged in successfully.',
+            'message' => 'User Login successfully.',
             'status' => true,
             'data' => $user,
         ], 200);
