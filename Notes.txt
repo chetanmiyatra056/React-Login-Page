@@ -20,11 +20,13 @@ php artisan make:controller Api\DropDownController
 
 // Add Migration
 
+php artisan make:migration create_countries_table
+
+php artisan make:migration create_states_table
+
+php artisan make:migration create_cities_table
+
 php artisan make:migration add_countries_field_to_users
-
-php artisan make:migration add_states_field_to_users
-
-php artisan make:migration add_cities_field_to_users
 
 
 

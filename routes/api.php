@@ -38,7 +38,7 @@ Route::post('/register',[RegisterController::class ,'register']);
 
 Route::post('/login',[LoginController::class ,'login']);
 
-Route::post('/countries',[DropDownController::class ,'countries']);
+Route::get('/countries',[DropDownController::class ,'countries']);
 
 Route::get('/states/{states}',[DropDownController::class,'states']);
 
