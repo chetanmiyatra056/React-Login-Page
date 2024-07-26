@@ -8,6 +8,7 @@ import Welcome from "./Components/Welcome";
 import React from "react";
 import PrivateRoute from "./Middleware/PrivateRoute";
 import PublicRoute from "./Middleware/PublicRoute";
+import Profile from "./Components/Profile";
 
 function App() {
   return (
@@ -32,6 +33,8 @@ function App() {
 
           <Route element={<PrivateRoute />}>
             <Route path="/welcome" element={<Welcome />} />
+
+            <Route path="/profile" element={<Profile />} />
           </Route>
         </Routes>
 
