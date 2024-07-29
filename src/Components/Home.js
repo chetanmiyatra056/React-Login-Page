@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
 import Header from "./Header";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
 
@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <div>
-      <Header />
+      <Header/>
       <div className="container my-3">
         <div className="p-5 bg-dark text-light rounded-3">
           <div className="container-fluid py-5">

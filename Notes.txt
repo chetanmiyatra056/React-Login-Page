@@ -4,6 +4,10 @@ cd react-app
 
 npm start
 
+npm update // Update npm packages
+
+npm outdated // To test the update
+
 npm install react-router-dom
 
 npm install axios

@@ -31,30 +31,42 @@ export default function Header() {
               {localStorage.getItem("user-info") ? (
                 <>
                   {/* With Login */}
+
                   <li className="nav-item">
                     <Link className="nav-link active" to="/welcome">
                       Welcome
                     </Link>
                   </li>
+
                   <li className="nav-item">
                     <Link className="nav-link active" to="/profile">
                       Profile
                     </Link>
                   </li>
+
+                  <li className="nav-item">
+                    <Link className="nav-link active" to="/password">
+                      Password
+                    </Link>
+                  </li>
+
                 </>
               ) : (
                 <>
                   {/* With out Login */}
+
                   <li className="nav-item">
                     <Link className="nav-link active" to="/register">
                       Register
                     </Link>
                   </li>
+
                   <li className="nav-item">
                     <Link className="nav-link active" to="/login">
                       Login
                     </Link>
                   </li>
+                  
                 </>
               )}
             </ul>

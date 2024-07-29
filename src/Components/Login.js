@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Header from "./Header";
 import { apiLaravel } from "../Utils/Apiurl";
+import Header from "./Header";
 
 function Login() {
   const navigate = useNavigate();
@@ -38,6 +38,8 @@ function Login() {
 
     return errors;
   };
+
+  
   async function login() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
@@ -74,7 +76,7 @@ function Login() {
 
   return (
     <div>
-      <Header />
+      <Header/>
       {message && <div className="alert alert-info">{message}</div>}
       <div className="container my-5">
         <h1>Login Form</h1>

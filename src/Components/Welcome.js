@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "./Header";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header";
 
 export default function Welcome() {
   let user = JSON.parse(localStorage.getItem("user-info"));
@@ -17,7 +17,7 @@ export default function Welcome() {
 
   return (
     <div>
-      <Header />
+      <Header/>
       <div className="container my-5">
         <div className="p-5 bg-dark text-light rounded-3">
           <div className="container-fluid py-5">

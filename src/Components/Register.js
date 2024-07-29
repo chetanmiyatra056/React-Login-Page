@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Header from "./Header";
 import { apiLaravel } from "../Utils/Apiurl";
+import Header from "./Header";
 
 function Register() {
   const navigate = useNavigate();
@@ -21,6 +21,7 @@ function Register() {
   const [statesid, setStatesid] = useState("0");
 
   const [cities, setCities] = useState([]);
+  const [citiesid, setCitiesid] = useState("0");
 
   const validate = () => {
     const newErrors = {};
@@ -35,17 +36,17 @@ function Register() {
       newErrors.email = "Email address is invalid";
     }
 
-    // if (!countries) {
-    //   newErrors.countries = "Country is required";
-    // }
+    if (countriesid === "0") {
+      newErrors.countriesid = "Country is required";
+    }
 
-    // if (!states) {
-    //   newErrors.states = "State is required";
-    // }
+    if (statesid === "0") {
+      newErrors.statesid = "State is required";
+    }
 
-    // if (!cities) {
-    //   newErrors.cities = "City is required";
-    // }
+    if (citiesid === "0") {
+      newErrors.citiesid = "City is required";
+    }
 
     if (!password) {
       newErrors.password = "Password is required";
@@ -63,57 +64,42 @@ function Register() {
 
     return newErrors;
   };
-  
 
-  // Country dropdown
-  useEffect(() => {
-    const getcountry = async () => {
-      const rescountry = await apiLaravel("/countries");
-      setCountries(await rescountry);
-    };
-    getcountry();
-  }, []);
+  const fetchCountries = async () => {
+    const rescountry = await apiLaravel("/countries");
+    setCountries(await rescountry);
+  };
 
-
-  // Statas Dropdown
-  const handlecountry = (e) => {
+  const handleCountryChange = async (e) => {
+    setStates([]);
+    setStatesid("0");
+    setCities([]);
     const getcountriesid = e.target.value;
     setCountriesid(getcountriesid);
 
-    const getstatesid = e.target.value;
-    setStatesid(getstatesid);
+    const resstate = await fetch(
+      `http://127.0.0.1:8000/api/states/${getcountriesid}`
+    );
+    const reset = await resstate.json();
+    setStates(reset);
   };
 
-  useEffect(() => {
-    const getstate = async () => {
-      const resstate = await fetch(
-        `http://127.0.0.1:8000/api/states/${countriesid}`
-      );
-      const reset = await resstate.json();
-      setStates(await reset);
-    };
-    getstate();
-  }, [countriesid]);
-
-
-  // Cities Dropdown
-  const handlestate = (e) => {
+  const handleStateChange = async (e) => {
+    setCitiesid("0");
     const getstatesid = e.target.value;
     setStatesid(getstatesid);
-    
+
+    const rescity = await fetch(
+      `http://127.0.0.1:8000/api/cities/${getstatesid}`
+    );
+    const reset = await rescity.json();
+    setCities(reset);
   };
 
-  useEffect(() => {
-    const getcity = async () => {
-      // const [statesid, setStatesid] = useState('');
-      const rescity = await fetch(
-        `http://127.0.0.1:8000/api/cities/${statesid}`
-      );
-      const reset = await rescity.json();
-      setCities(await reset);
-    };
-    getcity();
-  }, [statesid]);
+  const handleCityChange = (e) => {
+    const getcitiesid = e.target.value;
+    setCitiesid(getcitiesid);
+  };
 
   async function signUp() {
     const validationErrors = validate();
@@ -121,9 +107,9 @@ function Register() {
       let item = {
         name,
         email,
-        countries,
-        states,
-        cities,
+        countriesid,
+        statesid,
+        citiesid,
         password,
         confirm_password,
       };
@@ -147,6 +133,10 @@ function Register() {
     }
   }
 
+  useEffect(() => {
+    fetchCountries();
+  }, []);
+
   function reset() {
     setName("");
     setEmail("");
@@ -154,17 +144,20 @@ function Register() {
     setConfirm_password("");
     setErrors({});
     setMessage("");
-    // setCountries([]);
-    // setCountries([]);
+    setCountriesid("0");
+    setStates([]);
+    setStatesid("0");
+    setCities([]);
+    setCitiesid("0");
   }
 
   return (
     <>
       <Header />
-
       {message && <div className="alert alert-info">{message}</div>}
       <div className="container my-5">
         <h1>Register Form</h1>
+
         <form>
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
@@ -202,9 +195,9 @@ function Register() {
             </label>
             <select
               className="form-control"
-              name="countries"
+              name="countriesid"
               id="countries"
-              onChange={(e) => handlecountry(e)}
+              onChange={(e) => handleCountryChange(e)}
             >
               <option value="0">Select Country</option>
               {countries.map((getcon, index) => (
@@ -213,8 +206,8 @@ function Register() {
                 </option>
               ))}
             </select>
-            {errors.countries && (
-              <div className="text-danger">{errors.countries}</div>
+            {errors.countriesid && (
+              <div className="text-danger">{errors.countriesid}</div>
             )}
           </div>
 
@@ -224,9 +217,9 @@ function Register() {
             </label>
             <select
               className="form-control"
-              name="states"
+              name="statesid"
               id="states"
-              onChange={(e) => handlestate(e)}
+              onChange={(e) => handleStateChange(e)}
             >
               <option value="0">Select State</option>
 
@@ -236,8 +229,8 @@ function Register() {
                 </option>
               ))}
             </select>
-            {errors.states && (
-              <div className="text-danger">{errors.states}</div>
+            {errors.statesid && (
+              <div className="text-danger">{errors.statesid}</div>
             )}
           </div>
 
@@ -245,7 +238,12 @@ function Register() {
             <label htmlFor="city" className="form-label">
               City
             </label>
-            <select className="form-control" name="cities" id="cities">
+            <select
+              className="form-control"
+              name="citiesid"
+              id="cities"
+              onChange={(e) => handleCityChange(e)}
+            >
               <option value="0">Select City</option>
 
               {cities.map((getcities, index) => (
@@ -254,8 +252,8 @@ function Register() {
                 </option>
               ))}
             </select>
-            {errors.cities && (
-              <div className="text-danger">{errors.cities}</div>
+            {errors.citiesid && (
+              <div className="text-danger">{errors.citiesid}</div>
             )}
           </div>
 
