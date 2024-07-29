@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ReactController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\Api\UpdateController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,13 @@ Route::post('/register',[RegisterController::class ,'register']);
 
 Route::post('/login',[LoginController::class ,'login']);
 
+Route::get('/user/{user}',[UpdateController::class ,'getuser']);
+
+Route::post('/update/{user}',[UpdateController::class ,'update']);
+
+
+// Countries, States and Cities DropDown Apis
+
 Route::get('/countries',[DropDownController::class ,'countries']);
 
 Route::get('/states/{states}',[DropDownController::class,'states']);
@@ -45,3 +53,12 @@ Route::get('/states/{states}',[DropDownController::class,'states']);
 Route::get('/cities/{cities}',[DropDownController::class,'cities']);
 
 
+// Edit Countries, States and Cities DropDown Apis
+
+Route::get('/dropdown/{id}',[DropDownController::class ,'dropdown']);
+
+Route::get('/country/{id}',[DropDownController::class ,'country']);
+
+Route::get('/state/{id}',[DropDownController::class,'state']);
+
+Route::get('/city/{id}',[DropDownController::class,'city']);
