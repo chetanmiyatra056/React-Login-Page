@@ -1,11 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
+import axios from "axios";
 
 export default function Welcome() {
-  let user = JSON.parse(localStorage.getItem("user-info"));
+  let ls = JSON.parse(localStorage.getItem("user-info"));
+
+  const [users, setUsers] = useState(null);
+  const [dropdownData, setDropdownData] = useState(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/api/user/${ls.id}`)
+      .then((response) => {
+        setUsers(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the data!", error);
+      });
+  }, [ls.id]);
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/api/dropdown/${ls.id}`)
+      .then((response) => {
+        setDropdownData(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the data!", error);
+      });
+  }, [ls.id]);
 
   function logOut() {
     const confirm = window.confirm("Are you sure to logout?");
@@ -15,19 +41,49 @@ export default function Welcome() {
     }
   }
 
+  if (!users || !dropdownData) {
+    return (
+      <div>
+        <Header />
+        <div className="container my-5">
+          <div className="p-5 bg-dark text-light rounded-3">
+            <div className="container-fluid py-5">
+              <h1 className="fw-bold">Loading...</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <Header/>
+      <Header />
       <div className="container my-5">
         <div className="p-5 bg-dark text-light rounded-3">
           <div className="container-fluid py-5">
-            <h1 className="display-5 fw-bold">Hello {user && user.email}</h1>
-            <p className="col-md-8 fs-4">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ab ipsam
-              ducimus voluptas sit. Quisquam, animi facilis iure error id
-              accusamus cumque rerum amet at placeat eaque aperiam nobis quo
-              culpa eius tempora dolores aspernatur.
-            </p>
+            <h1 className="display-5 fw-bold">Hello {users.name}</h1>
+            <hr />
+
+            <div>
+              <h3>Email :- {users.email}</h3>
+            </div>
+            <hr />
+
+            <div>
+              <h3>Country name :- {dropdownData.countries_name}</h3>
+            </div>
+            <hr />
+
+            <div>
+              <h3>State name :- {dropdownData.states_name}</h3>
+            </div>
+            <hr />
+
+            <div>
+              <h3>City name :- {dropdownData.cities_name}</h3>
+            </div>
+            <hr />
 
             <button
               className="btn btn-primary btn-lg"

@@ -10,6 +10,7 @@ import PrivateRoute from "./Middleware/PrivateRoute";
 import PublicRoute from "./Middleware/PublicRoute";
 import Profile from "./Components/Profile";
 import Password from "./Components/Password";
+import Demo from "./Components/Demo_update";
 
 function App() {
   return (
@@ -39,6 +40,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
 
             <Route path="/password" element={<Password />} />
+
+            <Route path="/demo update" element={<Demo />} />
           </Route>
         </Routes>
 
