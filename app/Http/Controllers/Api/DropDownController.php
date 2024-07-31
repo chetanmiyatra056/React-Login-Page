@@ -81,7 +81,6 @@ class DropDownController extends Controller
             ->where('users.id', $id)
             ->first();
 
-
             return response()->json($drop);
     }
 }

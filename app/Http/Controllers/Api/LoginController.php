@@ -32,6 +32,7 @@ class LoginController extends Controller
             return response()->json([
                 'message' => 'Email not found!',
                 'status' => false,
+                'type' => 'danger',
                 'error' => false,
             ], 200);
         }
@@ -41,13 +42,15 @@ class LoginController extends Controller
             return response()->json([
                 'message' => 'Password does not match!',
                 'status' => false,
+                'type' => 'danger',
                 'error' => false,
             ], 200);
         }
 
         return response()->json([
-            'message' => 'User Login successfully.',
+            'message' => 'User login successfully.',
             'status' => true,
+            'type' => 'success',
             'data' => $user,
         ], 200);
 

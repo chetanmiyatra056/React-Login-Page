@@ -44,7 +44,7 @@ Route::get('/user/{user}',[UpdateController::class ,'getuser']);
 
 Route::post('/update/{user}',[UpdateController::class ,'update']);
 
-Route::post('/upassword',[PasswordController::class ,'upassword']);
+Route::post('/upassword/{user}',[PasswordController::class ,'upassword']);
 
 
 // Countries, States and Cities DropDown Apis

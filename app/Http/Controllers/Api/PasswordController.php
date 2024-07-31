@@ -10,11 +10,12 @@ use Illuminate\Support\Facades\Validator;
 
 class PasswordController extends Controller
 {
-    function upassword(Request $request){
+    public function upassword(Request $request, $id)
+    {
         $validator = Validator::make($request->all(), [
             'current_password' => 'required|min:4|max:8',
-            'password' => 'required|min:4|max:8',
-            'confirm_password' => 'required|same:password|min:4|max:8'
+            'new_password' => 'required|min:4|max:8',
+            'confirm_password' => 'required|same:new_password|min:4|max:8'
         ]);
 
         if ($validator->fails()) {
@@ -25,23 +26,26 @@ class PasswordController extends Controller
             ], 200);
         }
 
-        if (!Hash::check($request->current_password, auth()->user()->password)) {
+        $user = User::find($id);
+
+        if (!Hash::check($request->current_password, $user->password)) {
             return response()->json([
-                'message' => 'Password does not match!',
+                'message' => 'Current password does not match!',
                 'status' => false,
+                'type' => "danger",
                 'error' => false,
             ], 200);
         }
 
-        $user = User::whereId(auth()->user()->id)->update([
-            'password' => Hash::make($request->confirm_password)
+        $user->update([
+            'password' => Hash::make($request->new_password)
         ]);
 
         return response()->json([
-            'message' => 'User password change successfully.',
+            'message' => 'User password changed successfully.',
             'status' => true,
+            'type' => "success",
             'data' => $user,
         ], 200);
-
     }
 }

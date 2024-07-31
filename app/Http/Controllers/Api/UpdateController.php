@@ -47,18 +47,26 @@ class UpdateController extends Controller
             ], 404);
         }
 
-        // $user = User::find($id);
         $user->name =  $request->input('name');
         $user->email = $request->input('email');
         $user->countries = $request->input('countriesid');
         $user->states = $request->input('statesid');
         $user->cities = $request->input('citiesid');
-        $user->update();
 
-        return response()->json([
-            'message' => 'User updated successfully.',
-            'status' => true,
-            'data' => $user,
-        ], 201);
+       if( $user->update()){
+           return response()->json([
+               'message' => 'User updated successfully.',
+               'status' => true,
+               'type' => 'success',
+               'data' => $user,
+            ], 201);
+        }else{
+            return response()->json([
+                'message' => 'User not updated.',
+                'status' => false,
+                'type' => 'danger',
+                'data' => $user,
+             ], 201);
+        }
     }
 }
