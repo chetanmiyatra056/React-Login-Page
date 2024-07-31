@@ -1,16 +1,16 @@
 import "./App.css";
 import Footer from "./Components/Footer";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Home from "./Components/Home";
-import Register from "./Components/Register";
-import Login from "./Components/Login";
-import Welcome from "./Components/Welcome";
+import Home from "./Pages/Home";
+import Register from "./Pages/Register";
+import Login from "./Pages/Login";
+import Welcome from "./Pages/Welcome";
 import React from "react";
 import PrivateRoute from "./Middleware/PrivateRoute";
 import PublicRoute from "./Middleware/PublicRoute";
-import Profile from "./Components/Profile";
-import Password from "./Components/Password";
-import Demo from "./Components/Demo_update";
+import Profile from "./Pages/Profile";
+import Password from "./Pages/Password";
+import Demo from "./Pages/Demo_update";
 
 function App() {
   return (

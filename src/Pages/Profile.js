@@ -1,31 +1,62 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
+import Header from "../Components/Header";
 import { apiLaravel } from "../Utils/Apiurl";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Profile() {
-  let user = JSON.parse(localStorage.getItem("user-info"));
+  let ls = JSON.parse(localStorage.getItem("user-info"));
 
   const navigate = useNavigate();
 
+  const [dropdownData, setDropdownData] = useState(null);
+
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const [type, setType] = useState("");
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState(ls.name);
+  const [email, setEmail] = useState(ls.email);
 
   const [countries, setCountries] = useState([]);
-  const [countriesid, setCountriesid] = useState("0");
+  const [countriesid, setCountriesid] = useState(ls.countries);
 
   const [states, setStates] = useState([]);
-  const [statesid, setStatesid] = useState("0");
+  const [statesid, setStatesid] = useState(ls.states);
 
   const [cities, setCities] = useState([]);
-  const [citiesid, setCitiesid] = useState("0");
+  const [citiesid, setCitiesid] = useState(ls.cities);
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/api/dropdown/${ls.id}`)
+      .then((response) => {
+        setDropdownData(response.data);
+        fetchStates(response.data.countries_id);
+        fetchCities(response.data.states_id);
+      })
+      .catch((error) => {
+        console.error("There was an error fetching the data!", error);
+      });
+  }, [ls.id]);
 
   const fetchCountries = async () => {
     const rescountry = await apiLaravel("/countries");
     setCountries(await rescountry);
+  };
+
+  const fetchStates = async (countryId) => {
+    const resstate = await fetch(
+      `http://127.0.0.1:8000/api/states/${countryId}`
+    );
+    const reset = await resstate.json();
+    setStates(reset);
+  };
+
+  const fetchCities = async (stateId) => {
+    const rescity = await fetch(`http://127.0.0.1:8000/api/cities/${stateId}`);
+    const reset = await rescity.json();
+    setCities(reset);
   };
 
   const handleCountryChange = async (e) => {
@@ -35,11 +66,7 @@ function Profile() {
     const getcountriesid = e.target.value;
     setCountriesid(getcountriesid);
 
-    const resstate = await fetch(
-      `http://127.0.0.1:8000/api/states/${getcountriesid}`
-    );
-    const reset = await resstate.json();
-    setStates(reset);
+    fetchStates(getcountriesid);
   };
 
   const handleStateChange = async (e) => {
@@ -47,11 +74,7 @@ function Profile() {
     const getstatesid = e.target.value;
     setStatesid(getstatesid);
 
-    const rescity = await fetch(
-      `http://127.0.0.1:8000/api/cities/${getstatesid}`
-    );
-    const reset = await rescity.json();
-    setCities(reset);
+    fetchCities(getstatesid);
   };
 
   const handleCityChange = (e) => {
@@ -59,11 +82,7 @@ function Profile() {
     setCitiesid(getcitiesid);
   };
 
-  useEffect(() => {
-    fetchCountries();
-  }, []);
-
-  async function update() {
+  async function update(id) {
     let item = {
       name,
       email,
@@ -71,7 +90,7 @@ function Profile() {
       statesid,
       citiesid,
     };
-    let response = await apiLaravel(`/update/${user && user.id}`, {
+    let response = await apiLaravel("/update/" + id, {
       method: "POST",
       body: JSON.stringify(item),
     });
@@ -79,39 +98,54 @@ function Profile() {
     if (response.status === false) {
       setErrors(response.error);
       setMessage(response.message);
+      setType(response.type);
     } else {
       setErrors({});
-      setMessage("User updated successfully.");
+      setMessage(response.message);
+      setType(response.type);
       setTimeout(() => {
-        navigate("/login");
-      }, 1000);
+        localStorage.setItem("user-info", JSON.stringify(response.data));
+        setMessage(null);
+        navigate("/profile");
+      }, 100000);
     }
   }
 
+  useEffect(() => {
+    fetchCountries();
+  }, []);
+
   function reset() {
-    setName("");
-    setEmail("");
-    // setPassword("");
-    // setConfirm_password("");
-    // setErrors({});
-    setMessage("");
-    setCountriesid("0");
-    setStates([]);
-    setStatesid("0");
-    setCities([]);
-    setCitiesid("0");
+    window.location.reload();
+  }
+
+  if (!dropdownData) {
+    return (
+      <div>
+        <Header />
+        <div className="container my-5">
+          <h1>Profile Form</h1>
+          <h3 className="fw-bold">Loading...</h3>
+        </div>
+      </div>
+    );
   }
 
   return (
     <>
       <Header />
-      {message && <div className="alert alert-info">{message}</div>}
-      <div className="container my-5">
+
+      {message && (
+        <div>
+          <div className={`alert alert-${type} mb-2  fixed-top`} style={{marginTop:"60px"}}>{message}</div>
+        </div>
+      )}
+
+      <div className="container ">
         <h1>Profile Form</h1>
 
         <form>
-          {/* <input type="hidden" name="id" id="id" value={user && user.id} /> */}
-
+          
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
               Username
@@ -121,7 +155,8 @@ function Profile() {
               className="form-control"
               name="name"
               id="name"
-              value={user.name}
+              defaultValue={name}
+              onChange={(e) => setName(e.target.value)}
             />
             {errors.name && <div className="text-danger">{errors.name}</div>}
           </div>
@@ -135,7 +170,8 @@ function Profile() {
               className="form-control"
               name="email"
               id="email"
-              value={user && user.email}
+              defaultValue={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             {errors.email && <div className="text-danger">{errors.email}</div>}
           </div>
@@ -148,11 +184,9 @@ function Profile() {
               className="form-control"
               name="countries"
               id="countries"
+              value={countriesid}
               onChange={(e) => handleCountryChange(e)}
             >
-              <option value={user && user.countries}>
-                {user && user.countries}
-              </option>
               <option value="0">Select Country</option>
               {countries.map((getcon, index) => (
                 <option key={index} value={getcon.countries_id}>
@@ -160,8 +194,8 @@ function Profile() {
                 </option>
               ))}
             </select>
-            {errors.countries && (
-              <div className="text-danger">{errors.countries}</div>
+            {errors.countriesid && (
+              <div className="text-danger">{errors.countriesid}</div>
             )}
           </div>
 
@@ -173,9 +207,9 @@ function Profile() {
               className="form-control"
               name="states"
               id="states"
+              value={statesid}
               onChange={(e) => handleStateChange(e)}
             >
-              <option value={user && user.states}>{user && user.states}</option>
               <option value="0">Select State</option>
               {states.map((getstate, index) => (
                 <option key={index} value={getstate.states_id}>
@@ -183,8 +217,8 @@ function Profile() {
                 </option>
               ))}
             </select>
-            {errors.states && (
-              <div className="text-danger">{errors.states}</div>
+            {errors.statesid && (
+              <div className="text-danger">{errors.statesid}</div>
             )}
           </div>
 
@@ -196,9 +230,9 @@ function Profile() {
               className="form-control"
               name="cities"
               id="cities"
+              value={citiesid}
               onChange={(e) => handleCityChange(e)}
             >
-              <option value={user && user.cities}>{user && user.cities}</option>
               <option value="0">Select City</option>
               {cities.map((getcities, index) => (
                 <option key={index} value={getcities.cities_id}>
@@ -206,14 +240,14 @@ function Profile() {
                 </option>
               ))}
             </select>
-            {errors.cities && (
-              <div className="text-danger">{errors.cities}</div>
+            {errors.citiesid && (
+              <div className="text-danger">{errors.citiesid}</div>
             )}
           </div>
 
           <button
             type="button"
-            onClick={update}
+            onClick={() => update(ls.id)}
             className="btn btn-primary me-2"
           >
             Update

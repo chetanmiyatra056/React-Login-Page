@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiLaravel } from "../Utils/Apiurl";
-import Header from "./Header";
+import Header from "../Components/Header";
 
 function Register() {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ function Register() {
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const [type, setType] = useState("");
 
   const [countries, setCountries] = useState([]);
   const [countriesid, setCountriesid] = useState("0");
@@ -121,9 +122,11 @@ function Register() {
       if (response.status === false) {
         setErrors(response.error);
         setMessage(response.message);
+        setType(response.type);
       } else {
         setErrors({});
-        setMessage("User registered successfully.");
+        setMessage(response.message);
+        setType(response.type);
         setTimeout(() => {
           navigate("/login");
         }, 1000);
@@ -138,23 +141,13 @@ function Register() {
   }, []);
 
   function reset() {
-    setName("");
-    setEmail("");
-    setPassword("");
-    setConfirm_password("");
-    setErrors({});
-    setMessage("");
-    setCountriesid("0");
-    setStates([]);
-    setStatesid("0");
-    setCities([]);
-    setCitiesid("0");
+    window.location.reload();
   }
 
   return (
     <>
       <Header />
-      {message && <div className="alert alert-info">{message}</div>}
+      {message && <div className={`alert alert-${type}`}>{message}</div>}
       <div className="container my-5">
         <h1>Register Form</h1>
 
@@ -187,6 +180,40 @@ function Register() {
               onChange={(e) => setEmail(e.target.value)}
             />
             {errors.email && <div className="text-danger">{errors.email}</div>}
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              name="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {errors.password && (
+              <div className="text-danger">{errors.password}</div>
+            )}
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="confirm_password" className="form-label">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              className="form-control"
+              name="confirm_password"
+              id="confirm_password"
+              value={confirm_password}
+              onChange={(e) => setConfirm_password(e.target.value)}
+            />
+            {errors.confirm_password && (
+              <div className="text-danger">{errors.confirm_password}</div>
+            )}
           </div>
 
           <div className="mb-3">
@@ -257,38 +284,42 @@ function Register() {
             )}
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
+          <div class="form-group mb-3">
+            <label class="form-check-label my-2" for="checkhobbie">
+              Select Hobbies
             </label>
-            <input
-              type="password"
-              className="form-control"
-              name="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            {errors.password && (
-              <div className="text-danger">{errors.password}</div>
-            )}
-          </div>
+            <br />
 
-          <div className="mb-3">
-            <label htmlFor="confirm_password" className="form-label">
-              Confirm Password
-            </label>
             <input
-              type="password"
-              className="form-control"
-              name="confirm_password"
-              id="confirm_password"
-              value={confirm_password}
-              onChange={(e) => setConfirm_password(e.target.value)}
+              class="form-check-input mx-2"
+              type="checkbox"
+              name="hobbies[]"
+              value="reading"
             />
-            {errors.confirm_password && (
-              <div className="text-danger">{errors.confirm_password}</div>
-            )}
+            <label class="form-check-label" for="reading">
+              Reading
+            </label>
+
+            <input
+              class="form-check-input mx-2"
+              type="checkbox"
+              name="hobbies[]"
+              value="writting"
+            />
+            <label class="form-check-label" for="writting">
+              Writting
+            </label>
+
+            <input
+              class="form-check-input mx-2"
+              type="checkbox"
+              name="hobbies[]"
+              value="gaming"
+            />
+            <label class="form-check-label" for="gaming">
+              Gaming
+            </label>
+            <br />
           </div>
 
           <button

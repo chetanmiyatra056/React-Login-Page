@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiLaravel } from "../Utils/Apiurl";
-import Header from "./Header";
+import Header from "../Components/Header";
 
 function Login() {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // if (localStorage.getItem("user-info")) {
-    //   navigate("/welcome");
-    // }
-  });
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
+  const [type, setType] = useState("");
 
   const validate = () => {
     const errors = {};
@@ -54,9 +49,11 @@ function Login() {
       if (response.status === false) {
         setErrors(response.error);
         setMessage(response.message);
+        setType(response.type);
       } else {
         setErrors({});
-        setMessage("User registered successfully.");
+        setMessage(response.message);
+        setType(response.type);
         setTimeout(() => {
           localStorage.setItem("user-info", JSON.stringify(response.data));
           navigate("/welcome");
@@ -68,16 +65,13 @@ function Login() {
   }
 
   function reset() {
-    setEmail("");
-    setPassword("");
-    setErrors({});
-    setMessage("");
+    window.location.reload()
   }
 
   return (
     <div>
       <Header/>
-      {message && <div className="alert alert-info">{message}</div>}
+      {message && <div className={`alert alert-${type}`}>{message}</div>}
       <div className="container my-5">
         <h1>Login Form</h1>
         <form>

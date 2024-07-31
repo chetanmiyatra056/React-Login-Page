@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "./Header";
+import Header from "../Components/Header";
 import { apiLaravel } from "../Utils/Apiurl";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -10,12 +10,8 @@ function Demo() {
   const navigate = useNavigate();
 
   const [dropdownData, setDropdownData] = useState(null);
-
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
-
-  const [name, setName] = useState(ls.name);
-  const [email, setEmail] = useState(ls.email);
 
   const [countries, setCountries] = useState([]);
   const [countriesid, setCountriesid] = useState(ls.countries);
@@ -31,6 +27,8 @@ function Demo() {
       .get(`http://127.0.0.1:8000/api/dropdown/${ls.id}`)
       .then((response) => {
         setDropdownData(response.data);
+        fetchStates(response.data.countries_id);
+        fetchCities(response.data.states_id);
       })
       .catch((error) => {
         console.error("There was an error fetching the data!", error);
@@ -42,6 +40,20 @@ function Demo() {
     setCountries(await rescountry);
   };
 
+  const fetchStates = async (countryId) => {
+    const resstate = await fetch(
+      `http://127.0.0.1:8000/api/states/${countryId}`
+    );
+    const reset = await resstate.json();
+    setStates(reset);
+  };
+
+  const fetchCities = async (stateId) => {
+    const rescity = await fetch(`http://127.0.0.1:8000/api/cities/${stateId}`);
+    const reset = await rescity.json();
+    setCities(reset);
+  };
+
   const handleCountryChange = async (e) => {
     setStates([]);
     setStatesid("0");
@@ -49,11 +61,7 @@ function Demo() {
     const getcountriesid = e.target.value;
     setCountriesid(getcountriesid);
 
-    const resstate = await fetch(
-      `http://127.0.0.1:8000/api/states/${getcountriesid}`
-    );
-    const reset = await resstate.json();
-    setStates(reset);
+    fetchStates(getcountriesid);
   };
 
   const handleStateChange = async (e) => {
@@ -61,11 +69,7 @@ function Demo() {
     const getstatesid = e.target.value;
     setStatesid(getstatesid);
 
-    const rescity = await fetch(
-      `http://127.0.0.1:8000/api/cities/${getstatesid}`
-    );
-    const reset = await rescity.json();
-    setCities(reset);
+    fetchCities(getstatesid);
   };
 
   const handleCityChange = (e) => {
@@ -75,8 +79,6 @@ function Demo() {
 
   async function update(id) {
     let item = {
-      name,
-      email,
       countriesid,
       statesid,
       citiesid,
@@ -103,17 +105,6 @@ function Demo() {
     fetchCountries();
   }, []);
 
-  //   function reset() {
-  //     setName("");
-  //     setEmail("");
-  //     setMessage("");
-  //     setCountriesid("0");
-  //     setStates([]);
-  //     setStatesid("0");
-  //     setCities([]);
-  //     setCitiesid("0");
-  //   }
-
   if (!dropdownData) {
     return (
       <div>
@@ -133,13 +124,13 @@ function Demo() {
       {message && (
         <div>
           <div
-            class="alert alert-info alert-dismissible fade show"
+            className="alert alert-info alert-dismissible fade show"
             role="alert"
           >
             {message}
             <button
               type="button"
-              class="btn-close"
+              className="btn-close"
               data-bs-dismiss="alert"
               aria-label="Close"
             ></button>
@@ -151,38 +142,6 @@ function Demo() {
         <h1>Profile Form</h1>
 
         <form>
-          {/* <input type="hidden" name="id" id="id" value={user && user.id} /> */}
-
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Username
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="name"
-              id="name"
-              defaultValue={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-            {errors.name && <div className="text-danger">{errors.name}</div>}
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              name="email"
-              id="email"
-              defaultValue={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            {errors.email && <div className="text-danger">{errors.email}</div>}
-          </div>
-
           <div className="mb-3">
             <label htmlFor="country" className="form-label">
               Country
@@ -191,12 +150,9 @@ function Demo() {
               className="form-control"
               name="countries"
               id="countries"
+              value={countriesid}
               onChange={(e) => handleCountryChange(e)}
             >
-              <option defaultValue={ls.countries}>
-                {dropdownData.countries_name}
-              </option>
-
               <option value="0">Select Country</option>
               {countries.map((getcon, index) => (
                 <option key={index} value={getcon.countries_id}>
@@ -217,12 +173,9 @@ function Demo() {
               className="form-control"
               name="states"
               id="states"
+              value={statesid}
               onChange={(e) => handleStateChange(e)}
             >
-              <option defaultValue={ls.states}>
-                {dropdownData.states_name}
-              </option>
-
               <option value="0">Select State</option>
               {states.map((getstate, index) => (
                 <option key={index} value={getstate.states_id}>
@@ -230,8 +183,8 @@ function Demo() {
                 </option>
               ))}
             </select>
-            {errors.states && (
-              <div className="text-danger">{errors.states}</div>
+            {errors.statesid && (
+              <div className="text-danger">{errors.statesid}</div>
             )}
           </div>
 
@@ -243,11 +196,9 @@ function Demo() {
               className="form-control"
               name="cities"
               id="cities"
+              value={citiesid}
               onChange={(e) => handleCityChange(e)}
             >
-              <option defaultValue={ls.cities}>
-                {dropdownData.cities_name}
-              </option>
               <option value="0">Select City</option>
               {cities.map((getcities, index) => (
                 <option key={index} value={getcities.cities_id}>
@@ -255,8 +206,8 @@ function Demo() {
                 </option>
               ))}
             </select>
-            {errors.cities && (
-              <div className="text-danger">{errors.cities}</div>
+            {errors.citiesid && (
+              <div className="text-danger">{errors.citiesid}</div>
             )}
           </div>
 
