@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiLaravel } from "../Utils/Apiurl";
 import Header from "../Components/Header";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.module.css";
 
 function Register() {
   const navigate = useNavigate();
@@ -24,6 +26,22 @@ function Register() {
   const [cities, setCities] = useState([]);
   const [citiesid, setCitiesid] = useState("0");
 
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
+  const hobbies = ["Reading", "Writting", "Gaming"];
+
+  const [gender, setGender] = useState();
+
+  const [selectDate, setSelectDate] = useState(null);
+
+  const handleCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      setSelectedHobbies([...selectedHobbies, value]);
+    } else {
+      setSelectedHobbies(selectedHobbies.filter((hobbie) => hobbie !== value));
+    }
+  };
+
   const validate = () => {
     const newErrors = {};
 
@@ -36,6 +54,10 @@ function Register() {
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Email address is invalid";
     }
+
+    // if (hobbies !== null) {
+    //   newErrors.selectedHobbies = "Hobbies is required";
+    // }
 
     if (countriesid === "0") {
       newErrors.countriesid = "Country is required";
@@ -111,6 +133,9 @@ function Register() {
         countriesid,
         statesid,
         citiesid,
+        hobbies: selectedHobbies,
+        selectDate,
+        gender,
         password,
         confirm_password,
       };
@@ -147,7 +172,16 @@ function Register() {
   return (
     <>
       <Header />
-      {message && <div className={`alert alert-${type}`}>{message}</div>}
+      {message && (
+        <div>
+          <div
+            className={`alert alert-${type} mb-2  fixed-top`}
+            style={{ marginTop: "60px" }}
+          >
+            {message}
+          </div>
+        </div>
+      )}
       <div className="container my-5">
         <h1>Register Form</h1>
 
@@ -217,6 +251,87 @@ function Register() {
           </div>
 
           <div className="mb-3">
+            <label className="form-check-label my-2" htmlFor="checkhobbie">
+              Select Hobbies
+            </label>
+            <br />
+            {hobbies.map((hobbie, index) => (
+              <>
+                <span key={index}>
+                  <input
+                    type="checkbox"
+                    className="form-check-input mx-2"
+                    value={hobbie}
+                    checked={selectedHobbies.includes(hobbie)}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label className="form-check-label">{hobbie}</label>
+                </span>
+              </>
+            ))}
+            {errors.selectedHobbies && (
+              <div className="text-danger">{errors.selectedHobbies}</div>
+            )}
+          </div>
+
+          <div className="mb-3">
+            <label className="form-check-label my-2" htmlFor="gender">
+              Select Gender
+            </label>
+            <br />
+
+            <input
+              className="form-check-input mx-2"
+              type="radio"
+              value="Male"
+              name="gender"
+              onChange={(e) => setGender(e.target.value)}
+            />
+            <label className="form-check-label" htmlFor="male">
+              Male
+            </label>
+
+            <input
+              className="form-check-input mx-2"
+              type="radio"
+              value="Female"
+              name="gender"
+              onChange={(e) => setGender(e.target.value)}
+            />
+            <label className="form-check-label" htmlFor="female">
+              Female
+            </label>
+
+            <input
+              className="form-check-input mx-2"
+              type="radio"
+              value="Other"
+              name="gender"
+              onChange={(e) => setGender(e.target.value)}
+            />
+            <label className="form-check-label" htmlFor="other">
+              Other
+            </label>
+            <br />
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="date" className="form-label">
+              Select Date
+            </label>
+            <div>
+              <DatePicker
+                selected={selectDate}
+                onChange={(date) => setSelectDate(date)}
+                placeholderText="DD/MM/YYYY"
+                dateFormat="dd/MM/yyyy"
+                maxDate={new Date()}
+                showYearDropdown
+              />
+            </div>
+          </div>
+
+          <div className="mb-3">
             <label htmlFor="country" className="form-label">
               Country
             </label>
@@ -282,44 +397,6 @@ function Register() {
             {errors.citiesid && (
               <div className="text-danger">{errors.citiesid}</div>
             )}
-          </div>
-
-          <div class="form-group mb-3">
-            <label class="form-check-label my-2" for="checkhobbie">
-              Select Hobbies
-            </label>
-            <br />
-
-            <input
-              class="form-check-input mx-2"
-              type="checkbox"
-              name="hobbies[]"
-              value="reading"
-            />
-            <label class="form-check-label" for="reading">
-              Reading
-            </label>
-
-            <input
-              class="form-check-input mx-2"
-              type="checkbox"
-              name="hobbies[]"
-              value="writting"
-            />
-            <label class="form-check-label" for="writting">
-              Writting
-            </label>
-
-            <input
-              class="form-check-input mx-2"
-              type="checkbox"
-              name="hobbies[]"
-              value="gaming"
-            />
-            <label class="form-check-label" for="gaming">
-              Gaming
-            </label>
-            <br />
           </div>
 
           <button

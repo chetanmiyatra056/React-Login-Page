@@ -3,6 +3,8 @@ import Header from "../Components/Header";
 import { apiLaravel } from "../Utils/Apiurl";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.module.css";
 
 function Profile() {
   let ls = JSON.parse(localStorage.getItem("user-info"));
@@ -26,6 +28,22 @@ function Profile() {
 
   const [cities, setCities] = useState([]);
   const [citiesid, setCitiesid] = useState(ls.cities);
+
+  const [selectedHobbies, setSelectedHobbies] = useState([]);
+  const hobbies = ["Reading", "Writting", "Gaming"];
+
+  const [gender, setGender] = useState(ls.gender);
+
+  const [selectDate, setSelectDate] = useState(null);
+
+  const handleCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      setSelectedHobbies([...selectedHobbies, value]);
+    } else {
+      setSelectedHobbies(selectedHobbies.filter((hobbie) => hobbie !== value));
+    }
+  };
 
   useEffect(() => {
     axios
@@ -86,6 +104,8 @@ function Profile() {
     let item = {
       name,
       email,
+      hobbies: selectedHobbies,
+      gender,
       countriesid,
       statesid,
       citiesid,
@@ -107,7 +127,7 @@ function Profile() {
         localStorage.setItem("user-info", JSON.stringify(response.data));
         setMessage(null);
         navigate("/profile");
-      }, 100000);
+      }, 1000);
     }
   }
 
@@ -137,15 +157,19 @@ function Profile() {
 
       {message && (
         <div>
-          <div className={`alert alert-${type} mb-2  fixed-top`} style={{marginTop:"60px"}}>{message}</div>
+          <div
+            className={`alert alert-${type} mb-2  fixed-top`}
+            style={{ marginTop: "60px" }}
+          >
+            {message}
+          </div>
         </div>
       )}
 
-      <div className="container ">
+      <div className="container my-3">
         <h1>Profile Form</h1>
 
         <form>
-          
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
               Username
@@ -174,6 +198,90 @@ function Profile() {
               onChange={(e) => setEmail(e.target.value)}
             />
             {errors.email && <div className="text-danger">{errors.email}</div>}
+          </div>
+
+          <div className="mb-3">
+            <label className="form-check-label my-2" htmlFor="checkhobbie">
+              Select Hobbies
+            </label>
+            <br />
+            {hobbies.map((hobbie, index) => (
+              <>
+                <span key={index}>
+                  <input
+                    type="checkbox"
+                    className="form-check-input mx-2"
+                    value={hobbie}
+                    checked={selectedHobbies.includes(hobbie)}
+                    onChange={handleCheckboxChange}
+                  />
+                  <label className="form-check-label">{hobbie}</label>
+                </span>
+              </>
+            ))}
+            {errors.selectedHobbies && (
+              <div className="text-danger">{errors.selectedHobbies}</div>
+            )}
+          </div>
+
+          <div className="mb-3">
+            <label className="form-check-label my-2" htmlFor="gender">
+              Select Gender
+            </label>
+            <br />
+
+            <input
+              className="form-check-input mx-2"
+              type="radio"
+              value="Male"
+              name="gender"
+              onChange={(e) => setGender(e.target.value)}
+              checked={ls.gender === "Male" ? true : false}
+            />
+            <label className="form-check-label" htmlFor="male">
+              Male
+            </label>
+
+            <input
+              className="form-check-input mx-2"
+              type="radio"
+              value="Female"
+              onChange={(e) => setGender(e.target.value)}
+              name="gender"
+              // checked={ls.gender === "Female" ? true : false}
+            />
+            <label className="form-check-label" htmlFor="female">
+              Female
+            </label>
+
+            <input
+              className="form-check-input mx-2"
+              type="radio"
+              value="Other"
+              name="gender"
+              onChange={(e) => setGender(e.target.value)}
+              // checked={ls.gender === "Others"}
+            />
+            <label className="form-check-label" htmlFor="other">
+              Other
+            </label>
+            <br />
+          </div>
+          
+          <div className="mb-3">
+            <label htmlFor="date" className="form-label">
+              Select Date
+            </label>
+            <div>
+              <DatePicker
+                selected={selectDate}
+                onChange={(date) => setSelectDate(date)}
+                placeholderText="DD/MM/YYYY"
+                dateFormat="dd/MM/yyyy"
+                maxDate={new Date()}
+                showYearDropdown
+              />
+            </div>
           </div>
 
           <div className="mb-3">

@@ -71,6 +71,21 @@ export default function Welcome() {
             <hr />
 
             <div>
+              <h3>Hobbies :- {users.hobbies}</h3>
+            </div>
+            <hr />
+
+            <div>
+              <h3>Gender :- {users.gender}</h3>
+            </div>
+            <hr />
+
+            <div>
+              <h3>Date :- {users.date}</h3>
+            </div>
+            <hr />
+
+            <div>
               <h3>Country name :- {dropdownData.countries_name}</h3>
             </div>
             <hr />

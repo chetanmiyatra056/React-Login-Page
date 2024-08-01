@@ -71,7 +71,11 @@ function Login() {
   return (
     <div>
       <Header/>
-      {message && <div className={`alert alert-${type}`}>{message}</div>}
+      {message && (
+        <div>
+          <div className={`alert alert-${type} mb-2  fixed-top`} style={{marginTop:"60px"}}>{message}</div>
+        </div>
+      )}
       <div className="container my-5">
         <h1>Login Form</h1>
         <form>

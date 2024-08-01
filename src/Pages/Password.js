@@ -89,8 +89,8 @@ function Password() {
     <div>
       <Header />
       {message && (
-        <div style={{ postition: "absolute", top: "0" }}>
-          <div className={`alert alert-${type} mb-2`}>{message}</div>
+        <div>
+          <div className={`alert alert-${type} mb-2  fixed-top`} style={{marginTop:"60px"}}>{message}</div>
         </div>
       )}
       <div className="container mb-3">
