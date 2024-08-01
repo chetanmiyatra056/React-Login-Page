@@ -29,6 +29,8 @@ class UpdateController extends Controller
             'countriesid' => 'required',
             'statesid' => 'required',
             'citiesid' => 'required',
+            'hobbies' => 'required',
+            'gender' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -52,6 +54,9 @@ class UpdateController extends Controller
         $user->countries = $request->input('countriesid');
         $user->states = $request->input('statesid');
         $user->cities = $request->input('citiesid');
+        $user->hobbies = implode(',', $request->input("hobbies"));
+        // $user->hobbies= $request->input("hobbies");
+        $user->gender = $request->input('gender');
 
        if( $user->update()){
            return response()->json([
