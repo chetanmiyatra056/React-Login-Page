@@ -66,6 +66,11 @@ export default function Welcome() {
             <hr />
 
             <div>
+              <h3>Type :- {users.type}</h3>
+            </div>
+            <hr />
+            
+            <div>
               <h3>Email :- {users.email}</h3>
             </div>
             <hr />

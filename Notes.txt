@@ -16,6 +16,8 @@ npm install react-hook-form
 
 npm install react-datepicker
 
+npm install react-icons
+
 git init
 git add README.md
 git commit -m "first commit"

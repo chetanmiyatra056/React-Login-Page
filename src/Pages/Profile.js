@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css";
+import { format, parseISO } from "date-fns";
 
 function Profile() {
   let ls = JSON.parse(localStorage.getItem("user-info"));
@@ -22,19 +23,31 @@ function Profile() {
 
   const [countries, setCountries] = useState([]);
   const [countriesid, setCountriesid] = useState(ls.countries);
-
+  
   const [states, setStates] = useState([]);
   const [statesid, setStatesid] = useState(ls.states);
-
+  
   const [cities, setCities] = useState([]);
   const [citiesid, setCitiesid] = useState(ls.cities);
 
   const [selectedHobbies, setSelectedHobbies] = useState([]);
   const hobbies = ["Reading", "Writting", "Gaming"];
-
+  
   const [gender, setGender] = useState(ls.gender);
 
   const [selectDate, setSelectDate] = useState(null);
+
+  const [userType, setUserType] = useState(ls.type);
+
+
+  useEffect(() => {
+    if (ls.hobbies) {
+      setSelectedHobbies(ls.hobbies.split(","));
+    }
+    if (ls.date) {
+      setSelectDate(parseISO(ls.date));
+    }
+  }, [ls.hobbies, ls.date]);
 
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
@@ -106,9 +119,11 @@ function Profile() {
       email,
       hobbies: selectedHobbies,
       gender,
+      selectDate: selectDate ? format(selectDate, "yyyy-MM-dd") : null,
       countriesid,
       statesid,
       citiesid,
+      userType,
     };
     let response = await apiLaravel("/update/" + id, {
       method: "POST",
@@ -170,6 +185,7 @@ function Profile() {
         <h1>Profile Form</h1>
 
         <form>
+          {/* Name filed */}
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
               Username
@@ -185,6 +201,7 @@ function Profile() {
             {errors.name && <div className="text-danger">{errors.name}</div>}
           </div>
 
+          {/* Email filed */}
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Email
@@ -200,43 +217,42 @@ function Profile() {
             {errors.email && <div className="text-danger">{errors.email}</div>}
           </div>
 
+          {/* Hobbies filed */}
           <div className="mb-3">
             <label className="form-check-label my-2" htmlFor="checkhobbie">
               Select Hobbies
             </label>
             <br />
             {hobbies.map((hobbie, index) => (
-              <>
-                <span key={index}>
-                  <input
-                    type="checkbox"
-                    className="form-check-input mx-2"
-                    value={hobbie}
-                    checked={selectedHobbies.includes(hobbie)}
-                    onChange={handleCheckboxChange}
-                  />
-                  <label className="form-check-label">{hobbie}</label>
-                </span>
-              </>
+              <span key={index}>
+                <input
+                  type="checkbox"
+                  className="form-check-input mx-2"
+                  value={hobbie}
+                  checked={selectedHobbies.includes(hobbie)}
+                  onChange={handleCheckboxChange}
+                />
+                <label className="form-check-label">{hobbie}</label>
+              </span>
             ))}
-            {errors.selectedHobbies && (
-              <div className="text-danger">{errors.selectedHobbies}</div>
+            {errors.hobbies && (
+              <div className="text-danger">{errors.hobbies}</div>
             )}
           </div>
 
+          {/* Gender filed */}
           <div className="mb-3">
             <label className="form-check-label my-2" htmlFor="gender">
               Select Gender
             </label>
             <br />
-
             <input
               className="form-check-input mx-2"
               type="radio"
               value="Male"
               name="gender"
               onChange={(e) => setGender(e.target.value)}
-              checked={ls.gender === "Male" ? true : false}
+              checked={gender === "Male"}
             />
             <label className="form-check-label" htmlFor="male">
               Male
@@ -248,7 +264,7 @@ function Profile() {
               value="Female"
               onChange={(e) => setGender(e.target.value)}
               name="gender"
-              // checked={ls.gender === "Female" ? true : false}
+              checked={gender === "Female"}
             />
             <label className="form-check-label" htmlFor="female">
               Female
@@ -260,30 +276,40 @@ function Profile() {
               value="Other"
               name="gender"
               onChange={(e) => setGender(e.target.value)}
-              // checked={ls.gender === "Others"}
+              checked={gender === "Other"}
             />
             <label className="form-check-label" htmlFor="other">
               Other
             </label>
             <br />
+            {errors.gender && (
+              <div className="text-danger">{errors.gender}</div>
+            )}
           </div>
-          
+
+          {/* Datepicker filed */}
           <div className="mb-3">
             <label htmlFor="date" className="form-label">
               Select Date
-            </label>
-            <div>
-              <DatePicker
-                selected={selectDate}
-                onChange={(date) => setSelectDate(date)}
-                placeholderText="DD/MM/YYYY"
-                dateFormat="dd/MM/yyyy"
-                maxDate={new Date()}
-                showYearDropdown
-              />
-            </div>
+            </label>{" "}
+            <br />
+            <DatePicker
+              className="form-control"
+              selected={selectDate}
+              onChange={(date) => setSelectDate(date)}
+              placeholderText="DD/MM/YYYY"
+              dateFormat="dd/MM/yyyy"
+              maxDate={new Date()}
+              showYearDropdown
+              todayButton="TODAY"
+              isClearable
+            />
+            {errors.selectDate && (
+              <div className="text-danger">{errors.selectDate}</div>
+            )}
           </div>
 
+          {/* Countries filed */}
           <div className="mb-3">
             <label htmlFor="country" className="form-label">
               Country
@@ -307,6 +333,7 @@ function Profile() {
             )}
           </div>
 
+          {/* States filed */}
           <div className="mb-3">
             <label htmlFor="state" className="form-label">
               State
@@ -330,6 +357,7 @@ function Profile() {
             )}
           </div>
 
+          {/* Cities filed */}
           <div className="mb-3">
             <label htmlFor="city" className="form-label">
               City
@@ -353,6 +381,26 @@ function Profile() {
             )}
           </div>
 
+          {/* Type filed */}
+          <div className="form-group mb-3">
+            <label htmlFor="type">Type</label>
+            <select
+              className="form-select"
+              name="type"
+              id="type"
+              defaultValue={ls.type}
+              onChange={(e) => setUserType(e.target.value)}
+            >
+              <option value="0">Select your type</option>
+              <option value="seller">Seller</option>
+              <option value="user">User</option>
+            </select>
+            {errors.userType && (
+              <div className="text-danger">{errors.userType}</div>
+            )}
+          </div>
+
+          {/* Update Button */}
           <button
             type="button"
             onClick={() => update(ls.id)}
@@ -361,6 +409,7 @@ function Profile() {
             Update
           </button>
 
+          {/* Reset Button */}
           <button type="button" onClick={reset} className="btn btn-danger">
             Reset
           </button>

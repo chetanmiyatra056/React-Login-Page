@@ -4,18 +4,16 @@ import { apiLaravel } from "../Utils/Apiurl";
 import Header from "../Components/Header";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css";
+import { format } from "date-fns";
 
 function Register() {
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
   const [confirm_password, setConfirm_password] = useState("");
-
-  const [errors, setErrors] = useState({});
-  const [message, setMessage] = useState("");
-  const [type, setType] = useState("");
 
   const [countries, setCountries] = useState([]);
   const [countriesid, setCountriesid] = useState("0");
@@ -33,14 +31,13 @@ function Register() {
 
   const [selectDate, setSelectDate] = useState(null);
 
-  const handleCheckboxChange = (event) => {
-    const { value, checked } = event.target;
-    if (checked) {
-      setSelectedHobbies([...selectedHobbies, value]);
-    } else {
-      setSelectedHobbies(selectedHobbies.filter((hobbie) => hobbie !== value));
-    }
-  };
+  const [userType, setUserType] = useState("0");
+
+  // const [profile, setProfile] = useState("");
+
+  const [errors, setErrors] = useState({});
+  const [message, setMessage] = useState("");
+  const [type, setType] = useState("");
 
   const validate = () => {
     const newErrors = {};
@@ -53,22 +50,6 @@ function Register() {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Email address is invalid";
-    }
-
-    // if (hobbies !== null) {
-    //   newErrors.selectedHobbies = "Hobbies is required";
-    // }
-
-    if (countriesid === "0") {
-      newErrors.countriesid = "Country is required";
-    }
-
-    if (statesid === "0") {
-      newErrors.statesid = "State is required";
-    }
-
-    if (citiesid === "0") {
-      newErrors.citiesid = "City is required";
     }
 
     if (!password) {
@@ -85,7 +66,44 @@ function Register() {
       newErrors.confirm_password = "Passwords do not match";
     }
 
+    if (selectedHobbies.length === 0) {
+      newErrors.selectedHobbies = "Please select at least one hobby.";
+    }
+
+    if (!gender) {
+      newErrors.gender = "Gender is required.";
+    }
+
+    if (!selectDate) {
+      newErrors.selectDate = "Date is required.";
+    }
+
+    if (countriesid === "0") {
+      newErrors.countriesid = "Country is required";
+    }
+
+    if (statesid === "0") {
+      newErrors.statesid = "State is required";
+    }
+
+    if (citiesid === "0") {
+      newErrors.citiesid = "City is required";
+    }
+
+    if (userType === "0") {
+      newErrors.userType = "Type is required";
+    }
+
     return newErrors;
+  };
+
+  const handleCheckboxChange = (event) => {
+    const { value, checked } = event.target;
+    if (checked) {
+      setSelectedHobbies([...selectedHobbies, value]);
+    } else {
+      setSelectedHobbies(selectedHobbies.filter((hobbie) => hobbie !== value));
+    }
   };
 
   const fetchCountries = async () => {
@@ -130,14 +148,16 @@ function Register() {
       let item = {
         name,
         email,
+        password,
+        confirm_password,
+        hobbies: selectedHobbies,
+        gender,
+        selectDate: selectDate ? format(selectDate, "yyyy-MM-dd") : null,
         countriesid,
         statesid,
         citiesid,
-        hobbies: selectedHobbies,
-        selectDate,
-        gender,
-        password,
-        confirm_password,
+        userType,
+        // profile,
       };
       let response = await apiLaravel("/register", {
         method: "POST",
@@ -185,7 +205,8 @@ function Register() {
       <div className="container my-5">
         <h1>Register Form</h1>
 
-        <form>
+        <form enctype="multipart/form-data">
+          {/* Name filed */}
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
               Username
@@ -201,6 +222,7 @@ function Register() {
             {errors.name && <div className="text-danger">{errors.name}</div>}
           </div>
 
+          {/* Email filed */}
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Email
@@ -216,6 +238,7 @@ function Register() {
             {errors.email && <div className="text-danger">{errors.email}</div>}
           </div>
 
+          {/* Password filed */}
           <div className="mb-3">
             <label htmlFor="password" className="form-label">
               Password
@@ -233,6 +256,7 @@ function Register() {
             )}
           </div>
 
+          {/* Confirm password filed */}
           <div className="mb-3">
             <label htmlFor="confirm_password" className="form-label">
               Confirm Password
@@ -250,6 +274,7 @@ function Register() {
             )}
           </div>
 
+          {/* Hobbies filed */}
           <div className="mb-3">
             <label className="form-check-label my-2" htmlFor="checkhobbie">
               Select Hobbies
@@ -274,6 +299,7 @@ function Register() {
             )}
           </div>
 
+          {/* Gender filed */}
           <div className="mb-3">
             <label className="form-check-label my-2" htmlFor="gender">
               Select Gender
@@ -313,24 +339,36 @@ function Register() {
               Other
             </label>
             <br />
+            {errors.gender && (
+              <div className="text-danger">{errors.gender}</div>
+            )}
           </div>
 
+          {/* Datepicker filed */}
           <div className="mb-3">
             <label htmlFor="date" className="form-label">
               Select Date
             </label>
             <div>
               <DatePicker
+                className="form-control"
+                id="date"
                 selected={selectDate}
                 onChange={(date) => setSelectDate(date)}
                 placeholderText="DD/MM/YYYY"
                 dateFormat="dd/MM/yyyy"
                 maxDate={new Date()}
                 showYearDropdown
+                todayButton="TODAY"
+                isClearable
               />
             </div>
+            {errors.selectDate && (
+              <div className="text-danger">{errors.selectDate}</div>
+            )}
           </div>
 
+          {/* Countries filed */}
           <div className="mb-3">
             <label htmlFor="country" className="form-label">
               Country
@@ -353,6 +391,7 @@ function Register() {
             )}
           </div>
 
+          {/* States filed */}
           <div className="mb-3">
             <label htmlFor="state" className="form-label">
               State
@@ -376,6 +415,7 @@ function Register() {
             )}
           </div>
 
+          {/* Cities filed */}
           <div className="mb-3">
             <label htmlFor="city" className="form-label">
               City
@@ -399,6 +439,38 @@ function Register() {
             )}
           </div>
 
+          {/* Type filed */}
+          <div className="form-group mb-3">
+            <label htmlFor="type">Type</label>
+            <select
+              className="form-select"
+              name="type"
+              id="type"
+              onChange={(e) => setUserType(e.target.value)}
+            >
+              <option value="o">Select your type</option>
+              <option value="seller">Seller</option>
+              <option value="user">User</option>
+            </select>
+            {errors.userType && (
+              <div className="text-danger">{errors.userType}</div>
+            )}
+          </div>
+
+          {/* Profile filed incompleted */}
+          {/* <div className="form-group mb-3">
+            <label htmlFor="profile" className="form-label">
+              Choose Profile
+            </label>
+            <input
+              className="form-control"
+              type="file"
+              name="profile"
+              onChange={(e) => setProfile(e.target.files[0])}
+            />
+          </div> */}
+
+          {/* Submit button */}
           <button
             type="button"
             onClick={signUp}
@@ -407,6 +479,7 @@ function Register() {
             Sign Up
           </button>
 
+          {/* Reset button */}
           <button type="button" onClick={reset} className="btn btn-danger">
             Reset
           </button>

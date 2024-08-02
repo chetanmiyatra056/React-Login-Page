@@ -37,18 +37,31 @@ export default function Header() {
                       Welcome
                     </Link>
                   </li>
+                  
+                  <li className="nav-item">
+                    <Link className="nav-link active" to="/user">
+                      User
+                    </Link>
+                  </li>
 
                   <li className="nav-item">
                     <Link className="nav-link active" to="/profile">
                       Profile
                     </Link>
                   </li>
-
+                  
                   <li className="nav-item">
                     <Link className="nav-link active" to="/password">
                       Password
                     </Link>
                   </li>
+
+                  <li className="nav-item">
+                    <Link className="nav-link active" to="/lists">
+                      Lists
+                    </Link>
+                  </li>
+
 
                   {/* <li className="nav-item">
                     <Link className="nav-link active" to="/demo update">

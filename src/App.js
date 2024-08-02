@@ -11,6 +11,8 @@ import PublicRoute from "./Middleware/PublicRoute";
 import Profile from "./Pages/Profile";
 import Password from "./Pages/Password";
 import Demo from "./Pages/Demo_update";
+import User from "./Pages/User";
+import Lists from "./Pages/Lists";
 
 function App() {
   return (
@@ -37,9 +39,13 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/welcome" element={<Welcome />} />
 
+            <Route path="/user" element={<User/>} />
+
             <Route path="/profile" element={<Profile />} />
 
             <Route path="/password" element={<Password />} />
+
+            <Route path="/lists" element={<Lists/>} />
 
             <Route path="/demo update" element={<Demo />} />
           </Route>
