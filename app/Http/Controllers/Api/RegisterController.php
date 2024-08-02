@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -18,14 +17,16 @@ class RegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|unique:users',
             'email' => 'required|unique:users|regex:/(.+)@(.+)\.(.+)/i',
+            'password' => 'required|min:4|max:8',
+            'confirm_password' => 'required|same:password|min:4|max:8',
+            'hobbies' => 'required',
+            'gender' => 'required',
+            'selectDate' => 'required|date_format:Y-m-d',
             'countriesid' => 'required',
             'statesid' => 'required',
             'citiesid' => 'required',
-            'hobbies' => 'required',
-            'gender' => 'required',
-            'selectDate' => 'required',
-            'password' => 'required|min:4|max:8',
-            'confirm_password' => 'required|same:password|min:4|max:8',
+            'userType' => 'required',
+            // 'profile' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -37,25 +38,27 @@ class RegisterController extends Controller
         }
 
         $user = new User;
-        
+
         $user->name = $request->input('name');
         $user->email = $request->input('email');
         $user->password = Hash::make($request->input('password'));
         $user->countries = $request->input('countriesid');
         $user->states = $request->input('statesid');
         $user->cities = $request->input('citiesid');
-        $user->hobbies = implode(',', $request->input("hobbies"));
-        $user->gender = $request->input('gender');
 
-        $_stockupdate= Carbon::parse( $request["selectDate"])->format('Y-m-d'); 
-        
-        $user->date =$_stockupdate;
-
-        // $user->date = $request->input('selectDate');
         // $user->hobbies =  $request->input("hobbies");
-        $user->save();
+        $user->hobbies = implode(',', $request->input("hobbies"));
 
-        // return $request->input();
+        $user->gender = $request->input('gender');
+        $user->date = $request->input('selectDate');
+        $user->type = $request->input('userType');
+
+        // $img = time() . '_' . $request->file('profile')->getClientOriginalName();
+        // $request->file('profile')->move(public_path('uploads'), $img);
+
+        // $user->profile = $img;
+
+        $user->save();
 
         return response()->json([
             'message' => 'User registered successfully.',

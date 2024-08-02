@@ -36,6 +36,8 @@ php artisan make:migration add_hobbies_gender_field_to_users
 
 php artisan make:migration add_date_field_to_users
 
+php artisan make:migration add_type_file_field_to_users
+
 
 
 // Create Model
