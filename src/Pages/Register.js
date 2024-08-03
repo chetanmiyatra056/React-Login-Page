@@ -33,11 +33,12 @@ function Register() {
 
   const [userType, setUserType] = useState("0");
 
-  // const [profile, setProfile] = useState("");
+  // const [file, setFile] = useState("");
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
   const [type, setType] = useState("");
+
 
   const validate = () => {
     const newErrors = {};
@@ -157,7 +158,7 @@ function Register() {
         statesid,
         citiesid,
         userType,
-        // profile,
+        // file : file,
       };
       let response = await apiLaravel("/register", {
         method: "POST",
@@ -465,8 +466,8 @@ function Register() {
             <input
               className="form-control"
               type="file"
-              name="profile"
-              onChange={(e) => setProfile(e.target.files[0])}
+              name="file"
+              onChange={(e) => setFile(e.target.files[0])}
             />
           </div> */}
 

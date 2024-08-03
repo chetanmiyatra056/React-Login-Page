@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../Components/Header";
 import axios from "axios";
 
-export default function Welcome() {
+export default function Seller() {
   let ls = JSON.parse(localStorage.getItem("user-info"));
 
   const [users, setUsers] = useState(null);

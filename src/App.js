@@ -4,7 +4,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
 import Register from "./Pages/Register";
 import Login from "./Pages/Login";
-import Welcome from "./Pages/Welcome";
+import Seller from "./Pages/Seller";
 import React from "react";
 import PrivateRoute from "./Middleware/PrivateRoute";
 import PublicRoute from "./Middleware/PublicRoute";
@@ -13,12 +13,13 @@ import Password from "./Pages/Password";
 import Demo from "./Pages/Demo_update";
 import User from "./Pages/User";
 import Lists from "./Pages/Lists";
+import SellerRoute from "./Middleware/SellerRoute";
+import UserRoute from "./Middleware/UserRoute";
 
 function App() {
   return (
     <>
       <Router>
-
         <Routes>
           <Route
             exact
@@ -37,15 +38,19 @@ function App() {
           </Route>
 
           <Route element={<PrivateRoute />}>
-            <Route path="/welcome" element={<Welcome />} />
+            <Route element={<SellerRoute />}>
+              <Route path="/Seller" element={<Seller />} />
+            </Route>
 
-            <Route path="/user" element={<User/>} />
+            <Route element={<UserRoute />}>
+              <Route path="/user" element={<User />} />
+            </Route>
 
             <Route path="/profile" element={<Profile />} />
 
             <Route path="/password" element={<Password />} />
 
-            <Route path="/lists" element={<Lists/>} />
+            <Route path="/lists" element={<Lists />} />
 
             <Route path="/demo update" element={<Demo />} />
           </Route>

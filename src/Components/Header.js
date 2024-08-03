@@ -2,6 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Header() {
+  const ls = localStorage.getItem("user-info");
+
+  const lss = JSON.parse(localStorage.getItem("user-info"));
   return (
     <div style={{ marginBottom: "60px" }}>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -28,28 +31,34 @@ export default function Header() {
                 </Link>
               </li>
 
-              {localStorage.getItem("user-info") ? (
+              {ls ? (
                 <>
                   {/* With Login */}
 
-                  <li className="nav-item">
-                    <Link className="nav-link active" to="/welcome">
-                      Welcome
-                    </Link>
-                  </li>
-                  
-                  <li className="nav-item">
-                    <Link className="nav-link active" to="/user">
-                      User
-                    </Link>
-                  </li>
+                  {lss.type === "seller" ? (
+                    <>
+                      <li className="nav-item">
+                        <Link className="nav-link active" to="/seller">
+                          Seller
+                        </Link>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li className="nav-item">
+                        <Link className="nav-link active" to="/user">
+                          User
+                        </Link>
+                      </li>
+                    </>
+                  )}
 
                   <li className="nav-item">
                     <Link className="nav-link active" to="/profile">
                       Profile
                     </Link>
                   </li>
-                  
+
                   <li className="nav-item">
                     <Link className="nav-link active" to="/password">
                       Password
@@ -62,13 +71,11 @@ export default function Header() {
                     </Link>
                   </li>
 
-
                   {/* <li className="nav-item">
                     <Link className="nav-link active" to="/demo update">
                       Demo Update
                     </Link>
                   </li> */}
-
                 </>
               ) : (
                 <>
@@ -85,7 +92,6 @@ export default function Header() {
                       Login
                     </Link>
                   </li>
-                  
                 </>
               )}
             </ul>

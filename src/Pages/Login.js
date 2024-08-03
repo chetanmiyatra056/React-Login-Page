@@ -56,7 +56,15 @@ function Login() {
         setType(response.type);
         setTimeout(() => {
           localStorage.setItem("user-info", JSON.stringify(response.data));
-          navigate("/welcome");
+          let ls = JSON.parse(localStorage.getItem("user-info"));
+
+          if(ls.type === "seller")
+          {
+            navigate("/seller");
+          }else{
+            navigate("/user");
+          }
+
         }, 1000);
       }
     } else {
