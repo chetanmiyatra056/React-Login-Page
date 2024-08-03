@@ -27,6 +27,10 @@ class User extends Authenticatable
         'countries',
         'states',
         'cities',
+        'hobbies',
+        'gender',
+        'type',
+        'profile',
     ];
 
     /**

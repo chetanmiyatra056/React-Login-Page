@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AllUsersController;
 use App\Http\Controllers\Api\DropDownController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\PasswordController;
@@ -45,6 +46,8 @@ Route::get('/user/{user}',[UpdateController::class ,'getuser']);
 Route::post('/update/{user}',[UpdateController::class ,'update']);
 
 Route::post('/upassword/{user}',[PasswordController::class ,'upassword']);
+
+Route::get('/allshow',[AllUsersController::class ,'allshow']);
 
 
 // Countries, States and Cities DropDown Apis

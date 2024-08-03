@@ -20,6 +20,8 @@ php artisan make:controller Api\PasswordController
 
 php artisan make:controller Api\DropDownController
 
+php artisan make:controller Api\AllUsersController
+
 
 
 // Add Migration
