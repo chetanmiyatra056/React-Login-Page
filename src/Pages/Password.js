@@ -90,7 +90,12 @@ function Password() {
       <Header />
       {message && (
         <div>
-          <div className={`alert alert-${type} mb-2  fixed-top`} style={{marginTop:"60px"}}>{message}</div>
+          <div
+            className={`alert alert-${type} mb-2  fixed-top`}
+            style={{ marginTop: "60px" }}
+          >
+            {message}
+          </div>
         </div>
       )}
       <div className="container mb-3">

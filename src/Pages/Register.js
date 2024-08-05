@@ -33,12 +33,12 @@ function Register() {
 
   const [userType, setUserType] = useState("0");
 
-  // const [file, setFile] = useState("");
+  const [type, setType] = useState("");
+
+  const [file, setFile] = useState(null);
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
-  const [type, setType] = useState("");
-
 
   const validate = () => {
     const newErrors = {};
@@ -95,9 +95,14 @@ function Register() {
       newErrors.userType = "Type is required";
     }
 
+    if (!file) {
+      newErrors.file = "Profile is required";
+    }
+
     return newErrors;
   };
 
+  // Handle CheckBoxs
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
     if (checked) {
@@ -107,11 +112,13 @@ function Register() {
     }
   };
 
+  // Fetch Countries
   const fetchCountries = async () => {
     const rescountry = await apiLaravel("/countries");
     setCountries(await rescountry);
   };
 
+  // Handle Country
   const handleCountryChange = async (e) => {
     setStates([]);
     setStatesid("0");
@@ -126,6 +133,7 @@ function Register() {
     setStates(reset);
   };
 
+  // Handle State
   const handleStateChange = async (e) => {
     setCitiesid("0");
     const getstatesid = e.target.value;
@@ -138,12 +146,24 @@ function Register() {
     setCities(reset);
   };
 
+  // Handle City
   const handleCityChange = (e) => {
     const getcitiesid = e.target.value;
     setCitiesid(getcitiesid);
   };
 
+  // Files Convert to Base 64 
+  async function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function signUp() {
+    const fileBase64 = await convertFileToBase64(file);
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
       let item = {
@@ -158,7 +178,7 @@ function Register() {
         statesid,
         citiesid,
         userType,
-        // file : file,
+        file: fileBase64,
       };
       let response = await apiLaravel("/register", {
         method: "POST",
@@ -182,6 +202,7 @@ function Register() {
     }
   }
 
+  // fetchCountries useState
   useEffect(() => {
     fetchCountries();
   }, []);
@@ -206,7 +227,7 @@ function Register() {
       <div className="container my-5">
         <h1>Register Form</h1>
 
-        <form enctype="multipart/form-data">
+        <form encType="multipart/form-data">
           {/* Name filed */}
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
@@ -459,7 +480,7 @@ function Register() {
           </div>
 
           {/* Profile filed incompleted */}
-          {/* <div className="form-group mb-3">
+          <div className="form-group mb-3">
             <label htmlFor="profile" className="form-label">
               Choose Profile
             </label>
@@ -469,7 +490,8 @@ function Register() {
               name="file"
               onChange={(e) => setFile(e.target.files[0])}
             />
-          </div> */}
+            {errors.file && <div className="text-danger">{errors.file}</div>}
+          </div>
 
           {/* Submit button */}
           <button

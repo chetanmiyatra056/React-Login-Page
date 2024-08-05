@@ -3,20 +3,19 @@ import Header from "../Components/Header";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
-
   const navigate = useNavigate();
 
   function logOut() {
-    const confirm = window.confirm('Are you sure to logout?');
+    const confirm = window.confirm("Are you sure to logout?");
     if (confirm) {
       localStorage.clear();
-      navigate("/login")
+      navigate("/login");
     }
   }
 
   return (
     <div>
-      <Header/>
+      <Header />
       <div className="container my-3">
         <div className="p-5 bg-dark text-light rounded-3">
           <div className="container-fluid py-5">

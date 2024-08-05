@@ -16,30 +16,33 @@ function Profile() {
 
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState("");
-  const [type, setType] = useState("");
 
   const [name, setName] = useState(ls.name);
   const [email, setEmail] = useState(ls.email);
 
   const [countries, setCountries] = useState([]);
   const [countriesid, setCountriesid] = useState(ls.countries);
-  
+
   const [states, setStates] = useState([]);
   const [statesid, setStatesid] = useState(ls.states);
-  
+
   const [cities, setCities] = useState([]);
   const [citiesid, setCitiesid] = useState(ls.cities);
 
   const [selectedHobbies, setSelectedHobbies] = useState([]);
   const hobbies = ["Reading", "Writting", "Gaming"];
-  
+
   const [gender, setGender] = useState(ls.gender);
 
   const [selectDate, setSelectDate] = useState(null);
 
   const [userType, setUserType] = useState(ls.type);
 
+  const [file, setFile] = useState(null);
 
+  const [type, setType] = useState("");
+
+// Update Hobbies and Date
   useEffect(() => {
     if (ls.hobbies) {
       setSelectedHobbies(ls.hobbies.split(","));
@@ -49,6 +52,7 @@ function Profile() {
     }
   }, [ls.hobbies, ls.date]);
 
+  // Handle CheckBoxs
   const handleCheckboxChange = (event) => {
     const { value, checked } = event.target;
     if (checked) {
@@ -58,6 +62,7 @@ function Profile() {
     }
   };
 
+  // Fetch Countries, states and cities
   useEffect(() => {
     axios
       .get(`http://127.0.0.1:8000/api/dropdown/${ls.id}`)
@@ -71,11 +76,13 @@ function Profile() {
       });
   }, [ls.id]);
 
+  // Fetch Countries
   const fetchCountries = async () => {
     const rescountry = await apiLaravel("/countries");
     setCountries(await rescountry);
   };
 
+  // Fetch States
   const fetchStates = async (countryId) => {
     const resstate = await fetch(
       `http://127.0.0.1:8000/api/states/${countryId}`
@@ -84,12 +91,14 @@ function Profile() {
     setStates(reset);
   };
 
+  // Fetch Cities
   const fetchCities = async (stateId) => {
     const rescity = await fetch(`http://127.0.0.1:8000/api/cities/${stateId}`);
     const reset = await rescity.json();
     setCities(reset);
   };
 
+  // Handle Country Change
   const handleCountryChange = async (e) => {
     setStates([]);
     setStatesid("0");
@@ -100,6 +109,7 @@ function Profile() {
     fetchStates(getcountriesid);
   };
 
+  // Handle State Change
   const handleStateChange = async (e) => {
     setCitiesid("0");
     const getstatesid = e.target.value;
@@ -108,12 +118,26 @@ function Profile() {
     fetchCities(getstatesid);
   };
 
+  // Handle City Change
   const handleCityChange = (e) => {
     const getcitiesid = e.target.value;
     setCitiesid(getcitiesid);
   };
 
+  // Files Convert to Base 64 
+  async function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  
   async function update(id) {
+    const fileBase64 = await convertFileToBase64(file);
+
     let item = {
       name,
       email,
@@ -124,6 +148,7 @@ function Profile() {
       statesid,
       citiesid,
       userType,
+      file: fileBase64 ? fileBase64 : null,
     };
     let response = await apiLaravel("/update/" + id, {
       method: "POST",
@@ -398,6 +423,45 @@ function Profile() {
             {errors.userType && (
               <div className="text-danger">{errors.userType}</div>
             )}
+          </div>
+
+          {/* Profile Show */}
+          {ls.profile ? (
+            <div className="form-group mb-3">
+              <label htmlFor="img">Profile</label>
+              <br />
+              <img
+                src={`http://127.0.0.1:8000/uploads/${ls.profile}`}
+                alt="User Profile"
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  border: "2px solid black",
+                }}
+              />
+              {/* <input
+                type="text"
+                name="file"
+                value={ls.profile}
+                onChange={(e) => setFile(e.target.files[0])}
+                hidden
+              /> */}
+            </div>
+          ) : (
+            <p>Loading...</p>
+          )}
+
+          {/* File filed */}
+          <div className="form-group mb-3">
+            <label htmlFor="profile" className="form-label">
+              Choose New Profile
+            </label>
+            <input
+              className="form-control"
+              type="file"
+              name="file"
+              onChange={(e) => setFile(e.target.files[0])}
+            />
           </div>
 
           {/* Update Button */}

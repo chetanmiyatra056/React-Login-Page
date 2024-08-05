@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiLaravel } from "../Utils/Apiurl";
 import Header from "../Components/Header";
@@ -27,14 +27,13 @@ function Login() {
       errors.password = "Password is required";
     } else if (password.length < 4) {
       errors.password = "Password must be at minimum 4 characters";
-    }else if (password.length > 8) {
+    } else if (password.length > 8) {
       errors.password = "Password must be at maximum 8 characters";
     }
 
     return errors;
   };
 
-  
   async function login() {
     const validationErrors = validate();
     if (Object.keys(validationErrors).length === 0) {
@@ -45,7 +44,6 @@ function Login() {
         body: JSON.stringify(item),
       });
 
-      
       if (response.status === false) {
         setErrors(response.error);
         setMessage(response.message);
@@ -58,13 +56,11 @@ function Login() {
           localStorage.setItem("user-info", JSON.stringify(response.data));
           let ls = JSON.parse(localStorage.getItem("user-info"));
 
-          if(ls.type === "seller")
-          {
+          if (ls.type === "seller") {
             navigate("/seller");
-          }else{
+          } else {
             navigate("/user");
           }
-
         }, 1000);
       }
     } else {
@@ -73,15 +69,20 @@ function Login() {
   }
 
   function reset() {
-    window.location.reload()
+    window.location.reload();
   }
 
   return (
     <div>
-      <Header/>
+      <Header />
       {message && (
         <div>
-          <div className={`alert alert-${type} mb-2  fixed-top`} style={{marginTop:"60px"}}>{message}</div>
+          <div
+            className={`alert alert-${type} mb-2  fixed-top`}
+            style={{ marginTop: "60px" }}
+          >
+            {message}
+          </div>
         </div>
       )}
       <div className="container my-5">

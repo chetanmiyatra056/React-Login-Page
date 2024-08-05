@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default class MyComponent extends React.Component {
   constructor(props) {
@@ -6,28 +6,28 @@ export default class MyComponent extends React.Component {
     this.state = {
       error: null,
       isLoaded: false,
-      users: []
+      users: [],
     };
   }
 
   componentDidMount() {
     fetch("http://127.0.0.1:8000/api/users")
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
         (result) => {
           this.setState({
             isLoaded: true,
-            users: result
+            users: result,
           });
         },
-       
+
         (error) => {
           this.setState({
             isLoaded: true,
-            error
+            error,
           });
         }
-      )
+      );
   }
 
   render() {
@@ -39,7 +39,7 @@ export default class MyComponent extends React.Component {
     } else {
       return (
         <ul>
-          {users.map(item => (
+          {users.map((item) => (
             <li key={item.id}>
               {item.name} : {item.email}
             </li>
