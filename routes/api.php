@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\ReactController;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\UpdateController;
 use App\Http\Controllers\Api\UserController;
@@ -48,6 +49,8 @@ Route::post('/update/{user}',[UpdateController::class ,'update']);
 Route::post('/upassword/{user}',[PasswordController::class ,'upassword']);
 
 Route::get('/allshow',[AllUsersController::class ,'allshow']);
+
+Route::get('/search/{key}',[SearchController::class ,'search']);
 
 
 // Countries, States and Cities DropDown Apis

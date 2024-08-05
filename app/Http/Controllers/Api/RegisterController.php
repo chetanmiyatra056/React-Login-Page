@@ -26,7 +26,7 @@ class RegisterController extends Controller
             'statesid' => 'required',
             'citiesid' => 'required',
             'userType' => 'required',
-            // 'file' => 'required',
+            'file' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -52,6 +52,13 @@ class RegisterController extends Controller
         $user->gender = $request->input('gender');
         $user->date = $request->input('selectDate');
         $user->type = $request->input('userType');
+
+         $fileData = $request->input('file');
+         $fileName = time() . '.png';  
+         $filePath = public_path('uploads') . '/' . $fileName;
+         file_put_contents($filePath, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fileData)));
+ 
+         $user->profile = $fileName;
 
         // $img = time() . '_' . $request->file('file')->getClientOriginalName();
         // $request->file('file')->move(public_path('uploads'), $img);
