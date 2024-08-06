@@ -63,12 +63,17 @@ class UpdateController extends Controller
         $user->date = $request->input('selectDate');
         $user->type = $request->input('userType');
 
-        $fileData = $request->input('file');
-        $fileName = time() . '.png';
-        $filePath = public_path('uploads') . '/' . $fileName;
-        file_put_contents($filePath, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fileData)));
+        if ($request->input('file')) {
 
-        $user->profile = $fileName;
+            $fileData = $request->input('file');
+            $fileName = time() . '.png';
+            $filePath = public_path('uploads') . '/' . $fileName;
+            file_put_contents($filePath, base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $fileData)));
+
+            $user->profile = $fileName;
+        } else {
+            $user->profile = $request->input('oldfile');
+        }
 
         if ($user->update()) {
             return response()->json([

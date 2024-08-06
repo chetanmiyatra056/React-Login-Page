@@ -17,9 +17,6 @@ class SearchController extends Controller
             ->orWhere('states.name', 'LIKE', "$key%")
             ->orWhere('cities.name', 'LIKE', "$key%")
 
-            // ->whereDate('users.date', '>=', $key)
-            // ->whereDate('users.date', '<=', $key)
-
             ->leftJoin('countries', 'users.countries', '=', 'countries.id')
             ->leftJoin('states', 'users.states', '=', 'states.id')
             ->leftJoin('cities', 'users.cities', '=', 'cities.id')
