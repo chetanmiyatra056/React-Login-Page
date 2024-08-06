@@ -1,27 +1,33 @@
 import React, { useEffect, useState } from "react";
 import Header from "../Components/Header";
 import axios from "axios";
+import DatePicker from "react-datepicker";
 
 function Lists() {
   const [users, setUsers] = useState([]);
-  // const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://127.0.0.1:8000/api/allshow")
-      .then((response) => {
-        setUsers(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the data!", error);
-      });
+    fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("http://127.0.0.1:8000/api/allshow");
+      setUsers(response.data);
+    } catch (error) {
+      console.error("There was an error fetching the data!", error);
+    }
+  };
+
   async function search(key) {
-    let result = await fetch(`http://127.0.0.1:8000/api/search/${key}`);
-    result = await result.json();
-    console.warn(result);
-    setUsers(result);
+    if (key === "") {
+      fetchData();
+    } else {
+      let result = await fetch(`http://127.0.0.1:8000/api/search/${key}`);
+      result = await result.json();
+      console.warn(result);
+      setUsers(result);
+    }
   }
 
   function reset() {
@@ -35,27 +41,33 @@ function Lists() {
         <h1 className="text-center">All Lists Show</h1>
         <div className="row my-2 mx-2" style={{ float: "right" }}>
           <form className="d-flex col-md-12" action="">
-            {/* <div className="mx-2">
-              <label htmlFor="">Start Date:</label>
-              <input
-                className="form-control me-2"
-                type="date"
-                name="startDate"
-                id="startDate"
-                onChange={(e) => search(e.target.value)}
-                placeholder="DD-MM-YYYY"
+          {/* <div className="mb-3">
+              <label htmlFor="startDate" className="form-label">Start Date</label>
+              <DatePicker
+                className="form-control"
+                // selected={startDate}
+                // onChange={(date) => setStartDate(date)}
+                placeholderText="DD/MM/YYYY"
+                dateFormat="dd/MM/yyyy"
+                maxDate={new Date()}
+                showYearDropdown
+                todayButton="TODAY"
+                isClearable
               />
             </div>
 
-            <div className="mx-2">
-              <label htmlFor="">End Date:</label>
-              <input
-                className="form-control me-2"
-                type="date"
-                name="endDate"
-                id="endDate"
-                onChange={(e) => search(e.target.value)}
-                placeholder="DD-MM-YYYY"
+            <div className="mb-3">
+              <label htmlFor="endDate" className="form-label">End Date</label>
+              <DatePicker
+                className="form-control"
+                // selected={endDate}
+                // onChange={(date) => setEndDate(date)}
+                placeholderText="DD/MM/YYYY"
+                dateFormat="dd/MM/yyyy"
+                maxDate={new Date()}
+                showYearDropdown
+                todayButton="TODAY"
+                isClearable
               />
             </div> */}
 

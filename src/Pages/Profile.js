@@ -42,7 +42,7 @@ function Profile() {
 
   const [type, setType] = useState("");
 
-// Update Hobbies and Date
+  // Update Hobbies and Date
   useEffect(() => {
     if (ls.hobbies) {
       setSelectedHobbies(ls.hobbies.split(","));
@@ -124,7 +124,7 @@ function Profile() {
     setCitiesid(getcitiesid);
   };
 
-  // Files Convert to Base 64 
+  // Files Convert to Base 64
   async function convertFileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -134,22 +134,27 @@ function Profile() {
     });
   }
 
-  
   async function update(id) {
-    const fileBase64 = await convertFileToBase64(file);
+    // const fileBase64 = await convertFileToBase64(file);
 
-    let item = {
-      name,
-      email,
-      hobbies: selectedHobbies,
-      gender,
-      selectDate: selectDate ? format(selectDate, "yyyy-MM-dd") : null,
-      countriesid,
-      statesid,
-      citiesid,
-      userType,
-      file: fileBase64 ? fileBase64 : null,
-    };
+    let item = {};
+    item.name = name;
+    item.email = email;
+    item.hobbies = selectedHobbies;
+    item.gender = gender;
+    item.selectDate = selectDate ? format(selectDate, "yyyy-MM-dd") : null;
+    item.countriesid = countriesid;
+    item.statesid = statesid;
+    item.citiesid = citiesid;
+    item.userType = userType;
+
+    if (file) {
+      const fileBase64 = await convertFileToBase64(file);
+      item.file = fileBase64;
+    } else {
+      item.oldfile = ls.profile;
+    }
+
     let response = await apiLaravel("/update/" + id, {
       method: "POST",
       body: JSON.stringify(item),
@@ -439,13 +444,12 @@ function Profile() {
                   border: "2px solid black",
                 }}
               />
-              {/* <input
+              <input
                 type="text"
-                name="file"
+                name="oldfile"
                 value={ls.profile}
-                onChange={(e) => setFile(e.target.files[0])}
                 hidden
-              /> */}
+              />
             </div>
           ) : (
             <p>Loading...</p>

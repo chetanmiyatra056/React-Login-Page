@@ -152,7 +152,7 @@ function Register() {
     setCitiesid(getcitiesid);
   };
 
-  // Files Convert to Base 64 
+  // Files Convert to Base 64
   async function convertFileToBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
